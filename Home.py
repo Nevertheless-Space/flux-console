@@ -89,12 +89,15 @@ class Home():
     gitrepositories = k8_client.getAllSources(plurals=["gitrepositories"])
 
     first = True
-    for gitrepository in gitrepositories:
-      command = f'flux reconcile source git -n {gitrepository["metadata"]["namespace"]} {gitrepository["metadata"]["name"]}'
-      if not first: print()
-      else: first = False
-      print(f"{command}:")
-      utils.stderr_command(command, decode_error_replacement=".")
+    try:
+      for gitrepository in gitrepositories:
+        command = f'flux reconcile source git -n {gitrepository["metadata"]["namespace"]} {gitrepository["metadata"]["name"]}'
+        if not first: print()
+        else: first = False
+        print(f"{command}:")
+        utils.stderr_command(command, decode_error_replacement=".")
+    except:
+      pass
 
   def reconcileGitRepositories_popup(self):
 

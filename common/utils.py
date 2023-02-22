@@ -1,6 +1,7 @@
 import json
 import subprocess
 import sys
+from tkinter import *
 
 def kubectl_command(command):
   result = subprocess.run(command.split(' ') + ["-o", "json"], capture_output=True, shell=True)
@@ -46,3 +47,24 @@ def stderr_command(command, decode_error_replacement=""):
     if out != '':
         sys.stdout.write(out)
         sys.stdout.flush()
+
+def outputRedirectedPopup(style, title):
+
+  frame_secondary_window = Toplevel()
+
+  frame_secondary_window.title(title)
+  frame_secondary_window.geometry(style.getPopupGeometry())
+  frame_secondary_window.iconbitmap(style.icon_path)
+
+  frame_content = Frame(frame_secondary_window)
+  frame_content.pack(fill=BOTH, expand=TRUE,padx=5*style.multiplier, pady=5*style.multiplier)
+
+  scroll_v = Scrollbar(frame_content)
+  scroll_v.pack(side=RIGHT,fill=Y)
+  text = Text(frame_content, yscrollcommand= scroll_v.set, wrap="word", font=style.getTextFont01(), foreground=style.text_font01_color)
+  text.pack(fill=BOTH, expand=TRUE)
+  scroll_v.config(command = text.yview)
+
+  sys.stdout = StdoutRedirector(text)
+  
+  return frame_secondary_window

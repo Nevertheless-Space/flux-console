@@ -48,9 +48,9 @@ class MainStyle():
   def getMainGeometry(self):
     dimentions = {
       "width": (0.60 * self.screen_width),
-      "height": (0.60 * self.screen_height),
+      "height": (0.80 * self.screen_height),
       "right": (0.20 * self.screen_width) - 10*self.multiplier,
-      "top": (0.20 * self.screen_height) - 10*self.multiplier,
+      "top": (0.10 * self.screen_height) - 10*self.multiplier,
     }
     return f"{int(dimentions['width'])}x{int(dimentions['height'])}+{int(dimentions['right'])}+{int(dimentions['top'])}"
   

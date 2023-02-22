@@ -33,13 +33,17 @@ class HelmReleasesFrame(FluxCRsFrame):
     self.ctx_menu.add_command(label="Status", command=lambda: threading.Thread(target=self.status_popup).start())
     self.ctx_menu.add_command(label="Manifest", command=lambda: threading.Thread(target=self.manifest_popup).start())
     self.ctx_menu.add_separator()
-    # self.ctx_menu.add_command(label="Reconcile", command=lambda: threading.Thread(self.fluxCommand(resource="helmrelease", verb="reconcile")).start())
-    # self.ctx_menu.add_command(label="Reconcile with Source", command=lambda: threading.Thread(self.fluxCommand(resource="helmrelease", verb="reconcile", options="--with-source")).start())
+    self.ctx_menu.add_command(label="Reconcile", command=lambda: threading.Thread(self.fluxCommandPopup(resource="helmrelease", verb="reconcile")).start())
+    self.ctx_menu.add_command(label="Reconcile with Source", command=lambda: threading.Thread(self.fluxCommandPopup(resource="helmrelease", verb="reconcile", options="--with-source")).start())
     self.ctx_menu.add_command(label="Suspend", command=lambda: self.fluxCommand(resource="helmrelease", verb="suspend", options="--all"))
     self.ctx_menu.add_command(label="Resume", command=lambda: self.fluxCommand(resource="helmrelease", verb="resume", options="--all --wait=false"))
     self.ctx_menu.add_command(label="Suspend + Resume", command=self.suspendResume)
     self.ctx_menu.add_separator()
     self.ctx_menu.add_command(label="Helm Values", command=lambda: threading.Thread(target=self.helmValues_popup).start())
+    
+    self.ctx_menu_danger = Menu(self.ctx_menu, tearoff=0)
+    self.ctx_menu_danger.add_command(label="Helm Uninstall", command=self.helmUnistall_popup)
+    self.ctx_menu.add_cascade(label="Danger", menu=self.ctx_menu_danger)
 
   def loadData(self):
     self.fluxcrs = self.k8s.getAllHelmReleases()
@@ -129,3 +133,15 @@ class HelmReleasesFrame(FluxCRsFrame):
       scroll_v.config(command = self.helm_values_text.yview)
       self.helm_values_text.insert(END, f"[REVISION {revision}] " + result["stdout"].replace("  ", "    "))
       self.helm_values_text.config(state=DISABLED)
+
+  def helmUnistall_popup(self):
+    
+    helmrelease = self.getFluxCR(self.table.focus())
+    name = helmrelease["spec"]["releaseName"]
+    namespace = helmrelease["metadata"]["namespace"]
+
+    popup_frame = utils.outputRedirectedPopup(title=f"Helm Uninstall: {name}.{namespace}", style=self.style)
+    try: utils.stdout_command(f"helm uninstall -n {namespace} {name}")
+    except Exception as e: print(e)
+
+    popup_frame.mainloop()

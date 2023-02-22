@@ -113,6 +113,23 @@ class FluxCRsFrame():
       if "✗" in result["stderr"]:
         messagebox.showerror(title="Flux Error", message=result["stderr"])
 
+  def fluxCommandPopup(self, resource, verb, options=""):
+    _current = self.table
+    selected_items = _current.selection()
+    commands = []
+
+    popup_frame = utils.outputRedirectedPopup(title=f"{resource} {verb}", style=self.style)
+    try:
+      for item in selected_items:
+        name = _current.item(item)["values"][self.columns_keys.index(resource.split(" ")[0])]
+        namespace = _current.item(item)["values"][self.columns_keys.index("namespace")]
+        commands.append(f"flux {verb} {resource} -n {namespace} {name} {options}")
+      for command in commands:
+        utils.stderr_command(command)
+    except: pass
+  
+    popup_frame.mainloop()
+
   def contextMenu_popup(self, event):
     try:
       self.ctx_menu.tk_popup(event.x_root, event.y_root)

@@ -96,8 +96,7 @@ class Home():
         else: first = False
         print(f"{command}:")
         utils.stderr_command(command, decode_error_replacement=".")
-    except:
-      pass
+    except: pass
 
   def reconcileGitRepositories_popup(self):
     popup_frame = utils.outputRedirectedPopup(title="All GitRepository Reconciliation", style=self.style)

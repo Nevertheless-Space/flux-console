@@ -100,23 +100,6 @@ class Home():
       pass
 
   def reconcileGitRepositories_popup(self):
-
-    frame_secondary_window = Toplevel()
-
-    frame_secondary_window.title("All GitRepository Reconciliation")
-    frame_secondary_window.geometry(self.style.getPopupGeometry())
-    frame_secondary_window.iconbitmap(self.style.icon_path)
-
-    frame_content = Frame(frame_secondary_window)
-    frame_content.pack(fill=BOTH, expand=TRUE,padx=5*self.style.multiplier, pady=5*self.style.multiplier)
-
-    scroll_v = Scrollbar(frame_content)
-    scroll_v.pack(side=RIGHT,fill=Y)
-    text = Text(frame_content, yscrollcommand= scroll_v.set, wrap="word", font=self.style.getTextFont01(), foreground=self.style.text_font01_color)
-    text.pack(fill=BOTH, expand=TRUE)
-    scroll_v.config(command = text.yview)
-
-    sys.stdout = utils.StdoutRedirector(text)
+    popup_frame = utils.outputRedirectedPopup(title="All GitRepository Reconciliation", style=self.style)
     self.reconcileGitRepositories()
-
-    frame_secondary_window.mainloop()
+    popup_frame.mainloop()

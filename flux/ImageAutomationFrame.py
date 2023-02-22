@@ -28,8 +28,7 @@ class ImageAutomationFrame(FluxCRsFrame):
     self.ctx_menu.add_command(label="Status", command=lambda: threading.Thread(target=self.status_popup).start())
     self.ctx_menu.add_command(label="Manifest", command=lambda: threading.Thread(target=self.manifest_popup).start())
     self.ctx_menu.add_separator()
-    self.ctx_menu.add_command(label="Reconcile", command=lambda: threading.Thread(self.fluxCommand(resource="image", verb="reconcile")).start())
-    # self.ctx_menu.add_command(label="Reconcile with Source", command=lambda: threading.Thread(self.fluxCommand(resource="image", verb="reconcile", options="--with-source")).start())
+    self.ctx_menu.add_command(label="Reconcile", command=lambda: threading.Thread(self.fluxCommandPopup(resource=f"image {self.getImageTypeCommand()}", verb="reconcile")).start())
     self.ctx_menu.add_command(label="Suspend", command=lambda: self.fluxCommand(resource=f"image {self.getImageTypeCommand()}", verb="suspend", options="--all"))
     self.ctx_menu.add_command(label="Resume", command=lambda: self.fluxCommand(resource=f"image {self.getImageTypeCommand()}", verb="resume", options="--all --wait=false"))
     self.ctx_menu.add_command(label="Suspend + Resume", command=self.suspendResume)
@@ -71,3 +70,8 @@ class ImageAutomationFrame(FluxCRsFrame):
   def suspendResume(self):
     self.fluxCommand(resource=f"image {self.getImageTypeCommand()}", verb="suspend", options="--all")
     self.fluxCommand(resource=f"image {self.getImageTypeCommand()}", verb="resume", options="--all --wait=false")
+  
+  def fluxCommandPopup(self, resource, verb, options=""):
+    if "policy" in resource and verb == "reconcile":
+      messagebox.showerror(title="Flux Error", message="You cannot reconcile an ImagePolicy resource")
+    else: super().fluxCommand(self, resource, verb, options)

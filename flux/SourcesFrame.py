@@ -76,4 +76,4 @@ class SourcesFrame(FluxCRsFrame):
   def fluxCommandPopup(self, resource, verb, options=""):
     if "chart" in resource and verb == "reconcile":
       messagebox.showerror(title="Flux Error", message="You cannot reconcile an HelmChart resource")
-    else: super().fluxCommand(self, resource, verb, options)
+    else: super().fluxCommandPopup(resource, verb, options)

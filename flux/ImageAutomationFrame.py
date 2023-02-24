@@ -74,4 +74,4 @@ class ImageAutomationFrame(FluxCRsFrame):
   def fluxCommandPopup(self, resource, verb, options=""):
     if "policy" in resource and verb == "reconcile":
       messagebox.showerror(title="Flux Error", message="You cannot reconcile an ImagePolicy resource")
-    else: super().fluxCommand(self, resource, verb, options)
+    else: super().fluxCommandPopup(resource, verb, options)

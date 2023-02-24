@@ -1,6 +1,6 @@
 __pycache__
 build
 dist
-ntl-console.spec
+*.spec
 *.venv
 debug*

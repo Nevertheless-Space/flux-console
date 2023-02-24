@@ -1,4 +1,5 @@
 import os
+from tkinter import messagebox
 from kubernetes import client, config # https://github.com/kubernetes-client/python/blob/v24.2.0/kubernetes/README.md
 
 class FluxClient():
@@ -7,6 +8,12 @@ class FluxClient():
   crd = None
 
   def __init__(self):
+    try: self.clientInit()
+    except Exception as e:
+      messagebox.showerror(title="Kubebernetes API Error", message=e)
+      exit()
+
+  def clientInit(self, quit=True):
     config.load_kube_config(os.environ.get("KUBECONFIG"))
     self.flux_api_groups = {
       "helmreleases": {

@@ -141,7 +141,7 @@ class HelmReleasesFrame(FluxCRsFrame):
     namespace = helmrelease["metadata"]["namespace"]
 
     popup_frame = utils.outputRedirectedPopup(title=f"Helm Uninstall: {name}.{namespace}", style=self.style)
-    try: utils.stdout_command(f"helm uninstall -n {namespace} {name}")
+    try: utils.redirectOutputCommand(f"helm uninstall -n {namespace} {name}")
     except Exception as e: print(e)
 
     popup_frame.mainloop()

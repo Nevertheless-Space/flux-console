@@ -1,6 +1,8 @@
-import json
-import subprocess
 import sys
+import json
+import multiprocessing
+import threading
+import subprocess
 from tkinter import *
 
 def kubectl_command(command):
@@ -25,28 +27,24 @@ class StdoutRedirector():
   def flush(self):
       self.text_space.update()
 
-def stdout_command(command):
-  p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+def subcommandOutputRedirect(process, stderr=False, decode_error_replacement="", queue=None):
   while True:
-    out = p.stdout.read(1).decode()
-    if out == '' and p.poll() != None:
-        break
+    try:
+      if stderr: out = process.stderr.read(1).decode()
+      else: out = process.stdout.read(1).decode()
+    except UnicodeDecodeError:
+      out = decode_error_replacement
+    if out == '' and process.poll() != None:
+      break
     if out != '':
+      if queue != None: queue.put(out)
+      else:
         sys.stdout.write(out)
         sys.stdout.flush()
 
-def stderr_command(command, decode_error_replacement=""):
-  p = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE)
-  while True:
-    try: 
-      out = p.stderr.read(1).decode()
-    except UnicodeDecodeError:
-      out = decode_error_replacement
-    if out == '' and p.poll() != None:
-        break
-    if out != '':
-        sys.stdout.write(out)
-        sys.stdout.flush()
+def redirectOutputCommand(command, stderr=False, decode_error_replacement="", queue=None):
+  process = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE)
+  threading.Thread(target=subcommandOutputRedirect, args=(process,stderr,decode_error_replacement,queue)).start()
 
 def outputRedirectedPopup(style, title):
 
@@ -68,3 +66,23 @@ def outputRedirectedPopup(style, title):
   sys.stdout = StdoutRedirector(text)
   
   return frame_secondary_window
+
+def subprocessOutputRedirect(process, queue):
+  wait = True
+  while wait or queue.qsize() != 0:
+    if not process.is_alive():
+      wait = False
+    if queue.qsize() != 0:
+      sys.stdout.write(queue.get())
+      sys.stdout.flush()
+
+def subprocessRun(target_function, args: tuple):
+  queue = multiprocessing.Queue()
+  process = multiprocessing.Process(target=target_function, args=args, kwargs={"queue": queue})
+  process.start()
+  threading.Thread(target=subprocessOutputRedirect, args=(process,queue)).start()
+  return process
+
+def terminateFrameProcesses(frame, processes: list):
+  for process in processes: process.terminate()
+  frame.destroy()

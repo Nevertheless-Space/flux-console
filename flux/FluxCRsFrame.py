@@ -119,15 +119,17 @@ class FluxCRsFrame():
     commands = []
 
     popup_frame = utils.outputRedirectedPopup(title=f"{resource} {verb}", style=self.style)
+    processes = []
     try:
       for item in selected_items:
         name = _current.item(item)["values"][self.columns_keys.index(resource.split(" ")[0])]
         namespace = _current.item(item)["values"][self.columns_keys.index("namespace")]
         commands.append(f"flux {verb} {resource} -n {namespace} {name} {options}")
       for command in commands:
-        utils.stderr_command(command)
+        processes.append(utils.subprocessRun(target_function=utils.redirectOutputCommand, args=(command,True)))
     except: pass
   
+    popup_frame.protocol("WM_DELETE_WINDOW", func=lambda: utils.terminateFrameProcesses(popup_frame, processes))
     popup_frame.mainloop()
 
   def contextMenu_popup(self, event):

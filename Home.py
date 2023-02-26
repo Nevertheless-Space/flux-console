@@ -45,7 +45,7 @@ class Home():
     self.menubar_apparance = Menu(self.menubar_main, tearoff=0)
     self.menubar_apparance.add_command(label="Dashboard", command=lambda: self.initDashboard(frame_content))
     self.menubar_apparance.add_command(label="Tabs", command=lambda: self.initTabs(frame_content))
-    self.menubar_main.add_cascade(label="Apparence", menu=self.menubar_apparance)
+    self.menubar_main.add_cascade(label="Appearance", menu=self.menubar_apparance)
 
     self.menubar_main.add_command(label="Kubeconfig Reload", command=self.kubeconfigReload)
 
@@ -103,7 +103,7 @@ class Home():
         if not first: print()
         else: first = False
         print(f"{command}:")
-        utils.stderr_command(command, decode_error_replacement=".")
+        utils.redirectOutputCommand(command, stderr=True, decode_error_replacement=".")
     except: pass
 
   def reconcileGitRepositories_popup(self):

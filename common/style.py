@@ -1,9 +1,10 @@
 from tkinter import *
 from tkinter import ttk
+import common.icon as icon
 
 class MainStyle():
 
-  icon_path = './imgs/ntl.ico'
+  icon_path = '$$_temp.ico'
   style = None
   multiplier = None
   text = {
@@ -17,6 +18,7 @@ class MainStyle():
   text_font01_color = "gray22"
 
   def __init__(self, screen_width, screen_height):
+    icon.createIconFile(self.icon_path)
     self.style = ttk.Style()
     self.screen_width = screen_width
     self.screen_height = screen_height

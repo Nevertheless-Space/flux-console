@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.4.1
+
+- Fixing `Menu > Reconcile > All GitRepository` output concurrency making the operations in sequence
+
 ## 0.4.0
 
 - Changelog added

@@ -44,7 +44,9 @@ def subcommandOutputRedirect(process, stderr=False, decode_error_replacement="",
 
 def redirectOutputCommand(command, stderr=False, decode_error_replacement="", queue=None):
   process = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE)
-  threading.Thread(target=subcommandOutputRedirect, args=(process,stderr,decode_error_replacement,queue)).start()
+  thread = threading.Thread(target=subcommandOutputRedirect, args=(process,stderr,decode_error_replacement,queue))
+  thread.start()
+  return thread
 
 def outputRedirectedPopup(style, title):
 

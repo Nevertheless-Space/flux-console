@@ -2,7 +2,7 @@
 
 ## Summary
 
-This is an experimental UI for the FluxCD Resources.
+This is an experimental UI for the FluxCD Kubernetes Resources.
 
 This UI will rely on the `KUBECONFIG` environment variable for the Kubernetes API.
 

@@ -88,7 +88,7 @@ class HelmReleasesFrame(FluxCRsFrame):
     frame_secondary_window.iconbitmap(self.style.icon_path)
 
     frame_header = Frame(frame_secondary_window)
-    frame_header.pack(fill=X, expand=TRUE)
+    frame_header.pack(fill=X, expand=FALSE)
     frame_content = Frame(frame_secondary_window)
     frame_content.pack(fill=BOTH, expand=TRUE)
 

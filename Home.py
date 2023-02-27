@@ -1,4 +1,5 @@
 import sys
+import threading
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
@@ -39,7 +40,7 @@ class Home():
     self.menubar.add_cascade(label="Menu", menu=self.menubar_main)
 
     self.menubar_reconcile = Menu(self.menubar_main, tearoff=0)
-    self.menubar_reconcile.add_command(label="All GitRepository", command=self.reconcileGitRepositories_popup)
+    self.menubar_reconcile.add_command(label="All GitRepository", command=lambda: threading.Thread(target=self.reconcileGitRepositories_popup).start())
     self.menubar_main.add_cascade(label="Reconcile", menu=self.menubar_reconcile)
 
     self.menubar_apparance = Menu(self.menubar_main, tearoff=0)
@@ -103,7 +104,7 @@ class Home():
         if not first: print()
         else: first = False
         print(f"{command}:")
-        utils.redirectOutputCommand(command, stderr=True, decode_error_replacement=".")
+        utils.redirectOutputCommand(command, stderr=True, decode_error_replacement=".").join()
     except: pass
 
   def reconcileGitRepositories_popup(self):

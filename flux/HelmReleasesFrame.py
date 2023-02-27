@@ -88,16 +88,16 @@ class HelmReleasesFrame(FluxCRsFrame):
     frame_secondary_window.iconbitmap(self.style.icon_path)
 
     frame_header = Frame(frame_secondary_window)
-    frame_header.pack(fill=X, expand=TRUE)
+    frame_header.pack(fill=X, expand=FALSE)
     frame_content = Frame(frame_secondary_window)
     frame_content.pack(fill=BOTH, expand=TRUE)
 
     helm_history = None
     history = utils.generic_command(f"helm history -n {namespace} {name} -o json")
     if history["stderr"] != "":
-      print("Error")
       messagebox.showerror(title="Helm Error", message=history["stderr"])
-      frame_content.destroy()
+      frame_secondary_window.destroy()
+      return
     else:
       helm_history = json.loads(str(history["stdout"][:-1]))
 
@@ -141,7 +141,10 @@ class HelmReleasesFrame(FluxCRsFrame):
     namespace = helmrelease["metadata"]["namespace"]
 
     popup_frame = utils.outputRedirectedPopup(title=f"Helm Uninstall: {name}.{namespace}", style=self.style)
-    try: utils.redirectOutputCommand(f"helm uninstall -n {namespace} {name}")
-    except Exception as e: print(e)
+    result = utils.generic_command(f"helm uninstall -n {namespace} {name}")
+    if result["stderr"] != "":
+      messagebox.showerror(title="Helm Error", message=result["stderr"])
+      popup_frame.destroy()
+    else: print(result["stdout"])
 
     popup_frame.mainloop()

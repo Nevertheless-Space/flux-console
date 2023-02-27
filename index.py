@@ -7,6 +7,11 @@ import common.icon as icon
 import common.style as style
 from Home import Home
 
+def closeWindow(frame, style):
+  try: icon.deleteIconFile(style.icon_path)
+  except Exception as e: print(e)
+  frame.destroy()
+
 if __name__ == '__main__':
 
   freeze_support() # for pyinstaller on Windows
@@ -19,5 +24,5 @@ if __name__ == '__main__':
 
   Home(frame=frame_main, style=main_style)
 
-  frame_main.protocol("WM_DELETE_WINDOW", func=lambda: (icon.deleteIconFile(main_style.icon_path), frame_main.destroy()))
+  frame_main.protocol("WM_DELETE_WINDOW", func=lambda: closeWindow(frame_main, main_style))
   frame_main.mainloop()

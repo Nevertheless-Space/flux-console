@@ -24,6 +24,7 @@ class FluxCRsFrame():
   table = None
   scrollbar = None
   search_entry = None
+  last_column_sort = None
   autoreload_enabled = None
   autoreload_running = None
   ctx_menu = None
@@ -88,7 +89,8 @@ class FluxCRsFrame():
 
   def reloadData(self):
     self.loadData()
-    self.search(self.search_entry.get())
+    self.search(self.search_entry.get(), update=False)
+    if self.last_column_sort != None: self.sortColumn(self.last_column_sort["column_id"], self.last_column_sort["reverse"], update=False)
     self.updateTable()
 
   def updateTable(self):
@@ -233,12 +235,14 @@ class FluxCRsFrame():
     index = self.table.item(tableIndex)["values"][-1]
     return self.fluxcrs[index]
 
-  def sortColumn(self, column_id, reverse=False):
+  def sortColumn(self, column_id, reverse=False, update=True):
     self.table_data = sorted(self.table_data, key=lambda x: x[column_id], reverse=reverse)
-    self.updateTable()
-    self.table.heading(column_id, command=lambda: self.sortColumn(column_id=column_id, reverse=not reverse))
+    if update:
+      self.last_column_sort = {"column_id": column_id, "reverse": reverse}
+      self.updateTable()
+      self.table.heading(column_id, command=lambda: self.sortColumn(column_id=column_id, reverse=not reverse))
 
-  def search(self, text):
+  def search(self, text, update=True):
     if text != '':
       current = self.table_data
       self.table_data = []
@@ -266,4 +270,4 @@ class FluxCRsFrame():
 
         if matched: self.table_data.append(item)
       
-      self.updateTable()
+      if update: self.updateTable()

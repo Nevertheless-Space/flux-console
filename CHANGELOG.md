@@ -5,6 +5,7 @@ All notable changes to this project are documented in this file.
 ## X.X.X
 
 - Exception handling during the Auto Reload
+- Last column sorting honored on reload
 
 ## 0.4.1
 

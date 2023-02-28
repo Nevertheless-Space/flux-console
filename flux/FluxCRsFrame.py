@@ -103,6 +103,9 @@ class FluxCRsFrame():
   def fluxCommand(self, resource, verb, options=""):
     _current = self.table
     selected_items = _current.selection()
+    if len(selected_items) == 0:
+      messagebox.showerror(title="Empty Selection", message="No object selected!")
+      return
     commands = []
     for item in selected_items:
       name = _current.item(item)["values"][self.columns_keys.index(resource.split(" ")[0])]
@@ -117,7 +120,9 @@ class FluxCRsFrame():
     _current = self.table
     selected_items = _current.selection()
     commands = []
-
+    if len(selected_items) == 0:
+      messagebox.showerror(title="Empty Selection", message="No object selected!")
+      return
     popup_frame = utils.outputRedirectedPopup(title=f"{resource} {verb}", style=self.style)
     processes = []
     try:
@@ -141,6 +146,8 @@ class FluxCRsFrame():
   def status_popup(self):
 
     fluxcr = self.getFluxCR(self.table.focus())
+    if fluxcr == None: return
+
     kind = fluxcr["kind"]
     name = fluxcr["metadata"]["name"]
     namespace = fluxcr["metadata"]["namespace"]
@@ -178,6 +185,8 @@ class FluxCRsFrame():
   def manifest_popup(self):
 
     fluxcr = self.getFluxCR(self.table.focus())
+    if fluxcr == None: return
+
     kind = fluxcr["kind"]
     name = fluxcr["metadata"]["name"]
     namespace = fluxcr["metadata"]["namespace"]
@@ -218,6 +227,9 @@ class FluxCRsFrame():
     text.config(state=DISABLED)
 
   def getFluxCR(self, tableIndex):
+    if tableIndex == '':
+      messagebox.showerror(title="Invalid Index", message="The selected object is NOT valid!")
+      return None
     index = self.table.item(tableIndex)["values"][-1]
     return self.fluxcrs[index]
 

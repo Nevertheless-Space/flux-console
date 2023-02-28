@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## X.X.X
+
+- Exception handling during the Auto Reload
+
 ## 0.4.1
 
 - Fixing `Menu > Reconcile > All GitRepository` output concurrency making the operations in sequence

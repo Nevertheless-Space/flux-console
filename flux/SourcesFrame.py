@@ -59,6 +59,8 @@ class SourcesFrame(FluxCRsFrame):
 
   def getSourceTypeCommand(self):
     fluxcr = self.getFluxCR(self.table.focus())
+    if fluxcr == None: return
+    
     kind = fluxcr["kind"]
     if kind.lower() == "GitRepository".lower():
       return "git"

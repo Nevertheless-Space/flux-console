@@ -26,10 +26,15 @@ class Home():
   def __init__(self, frame, style):
     self.style = style
 
+    frame_topbar = Frame(frame, height=50, padx=7.5*self.style.multiplier)
+    frame_topbar.pack(fill=X, side=TOP)
+    frame_divider = Frame(frame, height=5*self.style.multiplier)
+    frame_divider.pack(fill=X, side=TOP)
     frame_content = Frame(frame)
     frame_content.pack(fill=BOTH, expand=TRUE, side=BOTTOM)
 
     self.initMenuBar(frame=frame, frame_content=frame_content)
+    self.initTopBar(frame=frame_topbar)
     self.initDashboard(frame_content)
   
   def initMenuBar(self, frame, frame_content):
@@ -49,6 +54,42 @@ class Home():
     self.menubar_main.add_cascade(label="Appearance", menu=self.menubar_apparance)
 
     self.menubar_main.add_command(label="Kubeconfig Reload", command=self.kubeconfigReload)
+
+  def initTopBar(self, frame):
+    self.selected_kubecontext = StringVar()
+
+    label = ttk.Label(frame, text="Kubeconfig Context:")
+    label.pack(side=LEFT)
+    kubecontexts = ttk.Combobox(frame, textvariable=self.selected_kubecontext, font=self.style.getMainFont())
+    frame.option_add('*TCombobox*Listbox.font', self.style.getMainFont())
+
+    contexts_result = utils.generic_command("kubectl config view -o=jsonpath='{.contexts[*].name}'")
+    if contexts_result["stderr"] != '':
+        messagebox.showerror(title="Kubectl Error", message=contexts_result["stderr"])
+        return
+    contexts = contexts_result["stdout"].replace("'","").split(" ")
+
+    self.setCurrentContext()
+    kubecontexts["values"] = [f'{context}' for context in contexts]
+    kubecontexts["state"] = 'readonly'
+
+    kubecontexts.bind('<<ComboboxSelected>>', lambda event: self.kubecontextSelected())
+    kubecontexts.pack(fill=X, expand=FALSE, padx=12.5*self.style.multiplier)
+
+  def setCurrentContext(self):
+    current_context_result = utils.generic_command("kubectl config view -o=jsonpath='{.current-context}'")
+    if current_context_result["stderr"] != '':
+        messagebox.showerror(title="Kubectl Error", message=current_context_result["stderr"])
+        return
+    self.selected_kubecontext.set(current_context_result["stdout"].replace("'",""))
+
+  def kubecontextSelected(self):
+    context = self.selected_kubecontext.get()
+    result = utils.generic_command(f"kubectl config use-context {context}")
+    if result["stderr"] != '':
+        messagebox.showerror(title="Kubectl Error", message=result["stderr"])
+        return
+    self.kubeconfigReload()
 
   def deleteContent(self, frame):
     for widget in frame.winfo_children():
@@ -89,6 +130,9 @@ class Home():
     frame_top.pack(fill=X, expand=FALSE, side=TOP)
     self.kustomizations = KustomizationsFrame(frame_top, self.style)
 
+    frame_divider = Frame(frame, height=5*self.style.multiplier)
+    frame_divider.pack(fill=X, side=TOP)
+
     frame_bottom = Frame(frame)
     frame_bottom.pack(fill=BOTH, expand=TRUE, side=BOTTOM)
     self.helmreleases = HelmReleasesFrame(frame_bottom, self.style)
@@ -118,5 +162,6 @@ class Home():
       if self.kustomizations != None: self.kustomizations.k8s.clientInit()
       if self.helmreleases != None: self.helmreleases.k8s.clientInit()
       if self.imageautomations != None: self.imageautomations.k8s.clientInit()
+      self.setCurrentContext()
     except Exception as e:
       messagebox.showerror(title="Kubebernetes API Error", message=e)

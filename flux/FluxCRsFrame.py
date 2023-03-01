@@ -48,8 +48,8 @@ class FluxCRsFrame():
     self.frame_scrollbar.pack(fill=Y, expand=Y)
 
   def initTopBar(self):
-    search_label = ttk.Label(self.frame_topbar, text="Search:")
-    search_label.pack(side=LEFT, padx=5*self.style.multiplier)
+    search_label = ttk.Label(self.frame_topbar, text="Search:  ")
+    search_label.pack(side=LEFT)
     self.search_entry = ttk.Entry(self.frame_topbar, font=self.style.getMainFont())
     self.search_entry.pack(fill=X, expand=TRUE, side=LEFT)
     self.search_entry.bind('<Return>', lambda event: self.reloadData())
@@ -59,7 +59,7 @@ class FluxCRsFrame():
     autoreload_label = ttk.Label(self.frame_topbar, text="Autoreload:")
     autoreload_label.pack(side=LEFT, padx=5*self.style.multiplier)
     autoreload = ttk.Checkbutton(self.frame_topbar, command=self.autoreload, variable=self.autoreload_enabled, onvalue=True, offvalue=False, takefocus=False)
-    autoreload.pack(side=RIGHT)
+    autoreload.pack(side=RIGHT, padx=1*self.style.multiplier)
 
   def autoreload(self):
     if self.autoreload_enabled.get() and not self.autoreload_running: threading.Thread(target=self.autoreloadRoutine).start()

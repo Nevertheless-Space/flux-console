@@ -79,6 +79,8 @@ class HelmReleasesFrame(FluxCRsFrame):
   def helmValues_popup(self):
 
     helmrelease = self.getFluxCR(self.table.focus())
+    if helmrelease == None: return
+
     name = helmrelease["spec"]["releaseName"]
     namespace = helmrelease["metadata"]["namespace"]
 
@@ -137,6 +139,8 @@ class HelmReleasesFrame(FluxCRsFrame):
   def helmUnistall_popup(self):
     
     helmrelease = self.getFluxCR(self.table.focus())
+    if helmrelease == None: return
+    
     name = helmrelease["spec"]["releaseName"]
     namespace = helmrelease["metadata"]["namespace"]
 

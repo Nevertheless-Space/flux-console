@@ -10,6 +10,7 @@ This UI will rely on the `KUBECONFIG` environment variable for the Kubernetes AP
 
 - Flux CLI (`>= 0.29` Recommended)
 - Helm CLI (`>= 3.7.0` Recommended)
+- Kubectl CLI (`>= 1.20` Recommended)
 
 ## Search
 

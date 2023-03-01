@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.5.0
+
+- Exception handling during the Auto Reload
+- Last column sorting honored on reload
+- Kubectl context switch dropdown menu
+- Minor improvements
+
 ## 0.4.1
 
 - Fixing `Menu > Reconcile > All GitRepository` output concurrency making the operations in sequence

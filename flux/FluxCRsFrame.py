@@ -24,6 +24,7 @@ class FluxCRsFrame():
   table = None
   scrollbar = None
   search_entry = None
+  last_column_sort = None
   autoreload_enabled = None
   autoreload_running = None
   ctx_menu = None
@@ -47,8 +48,8 @@ class FluxCRsFrame():
     self.frame_scrollbar.pack(fill=Y, expand=Y)
 
   def initTopBar(self):
-    search_label = ttk.Label(self.frame_topbar, text="Search:")
-    search_label.pack(side=LEFT, padx=5*self.style.multiplier)
+    search_label = ttk.Label(self.frame_topbar, text="Search:  ")
+    search_label.pack(side=LEFT)
     self.search_entry = ttk.Entry(self.frame_topbar, font=self.style.getMainFont())
     self.search_entry.pack(fill=X, expand=TRUE, side=LEFT)
     self.search_entry.bind('<Return>', lambda event: self.reloadData())
@@ -58,7 +59,7 @@ class FluxCRsFrame():
     autoreload_label = ttk.Label(self.frame_topbar, text="Autoreload:")
     autoreload_label.pack(side=LEFT, padx=5*self.style.multiplier)
     autoreload = ttk.Checkbutton(self.frame_topbar, command=self.autoreload, variable=self.autoreload_enabled, onvalue=True, offvalue=False, takefocus=False)
-    autoreload.pack(side=RIGHT)
+    autoreload.pack(side=RIGHT, padx=1*self.style.multiplier)
 
   def autoreload(self):
     if self.autoreload_enabled.get() and not self.autoreload_running: threading.Thread(target=self.autoreloadRoutine).start()
@@ -88,7 +89,8 @@ class FluxCRsFrame():
 
   def reloadData(self):
     self.loadData()
-    self.search(self.search_entry.get())
+    self.search(self.search_entry.get(), update=False)
+    if self.last_column_sort != None: self.sortColumn(self.last_column_sort["column_id"], self.last_column_sort["reverse"], update=False)
     self.updateTable()
 
   def updateTable(self):
@@ -103,6 +105,9 @@ class FluxCRsFrame():
   def fluxCommand(self, resource, verb, options=""):
     _current = self.table
     selected_items = _current.selection()
+    if len(selected_items) == 0:
+      messagebox.showerror(title="Empty Selection", message="No object selected!")
+      return
     commands = []
     for item in selected_items:
       name = _current.item(item)["values"][self.columns_keys.index(resource.split(" ")[0])]
@@ -117,7 +122,9 @@ class FluxCRsFrame():
     _current = self.table
     selected_items = _current.selection()
     commands = []
-
+    if len(selected_items) == 0:
+      messagebox.showerror(title="Empty Selection", message="No object selected!")
+      return
     popup_frame = utils.outputRedirectedPopup(title=f"{resource} {verb}", style=self.style)
     processes = []
     try:
@@ -141,6 +148,8 @@ class FluxCRsFrame():
   def status_popup(self):
 
     fluxcr = self.getFluxCR(self.table.focus())
+    if fluxcr == None: return
+
     kind = fluxcr["kind"]
     name = fluxcr["metadata"]["name"]
     namespace = fluxcr["metadata"]["namespace"]
@@ -178,6 +187,8 @@ class FluxCRsFrame():
   def manifest_popup(self):
 
     fluxcr = self.getFluxCR(self.table.focus())
+    if fluxcr == None: return
+
     kind = fluxcr["kind"]
     name = fluxcr["metadata"]["name"]
     namespace = fluxcr["metadata"]["namespace"]
@@ -218,15 +229,20 @@ class FluxCRsFrame():
     text.config(state=DISABLED)
 
   def getFluxCR(self, tableIndex):
+    if tableIndex == '':
+      messagebox.showerror(title="Invalid Index", message="The selected object is NOT valid!")
+      return None
     index = self.table.item(tableIndex)["values"][-1]
     return self.fluxcrs[index]
 
-  def sortColumn(self, column_id, reverse=False):
+  def sortColumn(self, column_id, reverse=False, update=True):
     self.table_data = sorted(self.table_data, key=lambda x: x[column_id], reverse=reverse)
-    self.updateTable()
-    self.table.heading(column_id, command=lambda: self.sortColumn(column_id=column_id, reverse=not reverse))
+    if update:
+      self.last_column_sort = {"column_id": column_id, "reverse": reverse}
+      self.updateTable()
+      self.table.heading(column_id, command=lambda: self.sortColumn(column_id=column_id, reverse=not reverse))
 
-  def search(self, text):
+  def search(self, text, update=True):
     if text != '':
       current = self.table_data
       self.table_data = []
@@ -254,4 +270,4 @@ class FluxCRsFrame():
 
         if matched: self.table_data.append(item)
       
-      self.updateTable()
+      if update: self.updateTable()

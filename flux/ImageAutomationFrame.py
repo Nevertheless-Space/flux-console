@@ -59,6 +59,8 @@ class ImageAutomationFrame(FluxCRsFrame):
 
   def getImageTypeCommand(self):
     fluxcr = self.getFluxCR(self.table.focus())
+    if fluxcr == None: return
+
     kind = fluxcr["kind"]
     if kind.lower() == "ImagePolicy".lower():
       return "policy"

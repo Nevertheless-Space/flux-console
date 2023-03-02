@@ -55,6 +55,14 @@ class HelmReleasesFrame(FluxCRsFrame):
           suspended = str(self.fluxcrs[index]["spec"]["suspend"])
         except:
           suspended = "False"
+        try:
+          message = self.fluxcrs[index]["status"]["conditions"][0]["message"]
+        except:
+          message = "-"
+        try:
+          status = self.fluxcrs[index]["status"]["conditions"][0]["status"]
+        except:
+          status = "-"
 
         chart = "-"
         if self.fluxcrs[index]["status"].get("lastAttemptedRevision") != None: chart = self.fluxcrs[index]["status"]["lastAttemptedRevision"]
@@ -63,9 +71,9 @@ class HelmReleasesFrame(FluxCRsFrame):
           "index": index,
           "namespace": self.fluxcrs[index]["metadata"]["namespace"],
           "helmrelease": self.fluxcrs[index]["metadata"]["name"],
-          "message": self.fluxcrs[index]["status"]["conditions"][0]["message"],
+          "message": message,
           "chart": chart,
-          "status": self.fluxcrs[index]["status"]["conditions"][0]["status"],
+          "status": status,
           "suspended": suspended,
         }
         self.table_data.append(item)

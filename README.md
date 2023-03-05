@@ -14,6 +14,8 @@ This UI will rely on the `KUBECONFIG` environment variable for the Kubernetes AP
 
 ## Search
 
+### Main Search
+
 Words in the search, obtained by splitting on single spaces, will be used in this way:
 
 - All the strings will be converted in lowercase
@@ -24,3 +26,13 @@ Words in the search, obtained by splitting on single spaces, will be used in thi
 - **Column search**: `helmrelease:myhelmrelease` or `helmrelease:myhelmrelease1 status:true namespace:mynamespace suspended:true`
   - All the rows with the EXACT match of `<column name>:<column value>` will be returned
 - All the concepts previously illustrated can be combined with each other
+
+### KUBECONFIG Contexts Search
+
+Words in the search, obtained by splitting on single spaces, will be used in this way:
+
+- All the strings will be converted in lowercase
+- Basic multi-keywords search: `<word>` or `<word1> <word2> <word3>`
+  - All the KUBECONFIG Contexts containing all the words will be returned
+
+The search will be triggered by the `ENTER` button pression.

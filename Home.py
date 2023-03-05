@@ -18,6 +18,9 @@ class Home():
   menubar_reconcile = None
   menubar_apparance = None
 
+  kubecontexts = []
+  kubecontexts_combobox = None
+
   sources = None
   kustomizations = None
   helmreleases = None
@@ -60,21 +63,21 @@ class Home():
 
     label = ttk.Label(frame, text="Kubeconfig Context:")
     label.pack(side=LEFT)
-    kubecontexts = ttk.Combobox(frame, textvariable=self.selected_kubecontext, font=self.style.getMainFont())
+    self.kubecontexts_combobox = ttk.Combobox(frame, textvariable=self.selected_kubecontext, font=self.style.getMainFont())
     frame.option_add('*TCombobox*Listbox.font', self.style.getMainFont())
 
     contexts_result = utils.generic_command("kubectl config view -o=jsonpath='{.contexts[*].name}'")
     if contexts_result["stderr"] != '':
         messagebox.showerror(title="Kubectl Error", message=contexts_result["stderr"])
         return
-    contexts = contexts_result["stdout"].replace("'","").split(" ")
+    self.kubecontexts = contexts_result["stdout"].replace("'","").split(" ")
 
     self.setCurrentContext()
-    kubecontexts["values"] = [f'{context}' for context in contexts]
-    kubecontexts["state"] = 'readonly'
+    self.kubecontexts_combobox["values"] = [f'{context}' for context in self.kubecontexts]
 
-    kubecontexts.bind('<<ComboboxSelected>>', lambda event: self.kubecontextSelected())
-    kubecontexts.pack(fill=X, expand=FALSE, padx=12.5*self.style.multiplier)
+    self.kubecontexts_combobox.bind('<<ComboboxSelected>>', lambda event: self.kubecontextSelected())
+    self.kubecontexts_combobox.bind('<Return>', self.kubecontextsFilter)
+    self.kubecontexts_combobox.pack(fill=X, expand=FALSE, padx=12.5*self.style.multiplier)
 
   def setCurrentContext(self):
     current_context_result = utils.generic_command("kubectl config view -o=jsonpath='{.current-context}'")
@@ -90,6 +93,23 @@ class Home():
         messagebox.showerror(title="Kubectl Error", message=result["stderr"])
         return
     self.kubeconfigReload()
+
+  def kubecontextsFilter(self, event):
+    value = event.widget.get()
+    if value == '':
+      self.kubecontexts_combobox['values'] = self.kubecontexts
+    else:
+      data = []
+      for item in self.kubecontexts:
+        matched = True
+        for keyword in value.lower().split(' '):
+          if matched and keyword in item.lower(): continue
+          else:
+            matched = False
+            break
+        if matched: data.append(item)
+      self.kubecontexts_combobox['values'] = data
+    self.kubecontexts_combobox.event_generate('<Down>')
 
   def deleteContent(self, frame):
     for widget in frame.winfo_children():

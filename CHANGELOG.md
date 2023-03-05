@@ -4,6 +4,7 @@ All notable changes to this project are documented in this file.
 
 ## X.X.X
 
+- Kubeconfig contexts multi-keyword search
 - `status.conditions` missing error handled
 
 ## 0.5.0

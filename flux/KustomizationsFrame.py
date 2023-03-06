@@ -42,13 +42,21 @@ class KustomizationsFrame(FluxCRsFrame):
           suspended = str(self.fluxcrs[index]["spec"]["suspend"])
         except:
           suspended = "False"
+        try:
+          message = self.fluxcrs[index]["status"]["conditions"][0]["message"]
+        except:
+          message = "-"
+        try:
+          status = self.fluxcrs[index]["status"]["conditions"][0]["status"]
+        except:
+          status = "-"
 
         item = {
           "index": index,
           "namespace": self.fluxcrs[index]["metadata"]["namespace"],
           "kustomization": self.fluxcrs[index]["metadata"]["name"],
-          "message": self.fluxcrs[index]["status"]["conditions"][0]["message"],
-          "status": self.fluxcrs[index]["status"]["conditions"][0]["status"],
+          "message": message,
+          "status": status,
           "suspended": suspended,
         }
         self.table_data.append(item)

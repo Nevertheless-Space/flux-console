@@ -2,11 +2,19 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.6.0
+
+- `KUBECONFIG` Contexts multi-keyword search
+- `status.conditions` missing error handled
+- The Kubeconfig Reload now will update also the `KUBECONFIG` Contexts
+- Startup issues with the `KUBECONFIG` file handled
+- Utility to get always the latest versions added: `utils/get-latest-version.ps1`
+
 ## 0.5.0
 
 - Exception handling during the Auto Reload
 - Last column sorting honored on reload
-- Kubectl context switch dropdown menu
+- `KUBECONFIG` Contexts switch dropdown menu
 - Minor improvements
 
 ## 0.4.1

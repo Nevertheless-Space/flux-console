@@ -2,6 +2,10 @@ import os
 from tkinter import messagebox
 from kubernetes import client, config # https://github.com/kubernetes-client/python/blob/v24.2.0/kubernetes/README.md
 
+# Raised when there are issues with the K8s Client
+class KubernetesAPI(Exception):
+  pass
+
 class FluxClient():
 
   flux_api_groups = None
@@ -10,8 +14,7 @@ class FluxClient():
   def __init__(self):
     try: self.clientInit()
     except Exception as e:
-      messagebox.showerror(title="Kubebernetes API Error", message=e)
-      exit()
+      raise KubernetesAPI(e)
 
   def clientInit(self, quit=True):
     config.load_kube_config(os.environ.get("KUBECONFIG"))

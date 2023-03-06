@@ -36,3 +36,16 @@ Words in the search, obtained by splitting on single spaces, will be used in thi
   - All the KUBECONFIG Contexts containing all the words will be returned
 
 The search will be triggered by the `ENTER` button pression.
+
+## Utils
+
+### get-latest-version.ps1
+
+Using the Powershell script located [here](./utils/get-latest-version.ps1), getting the latest versions will be easier.
+
+The script will: **delete everything in the running folder** except itself, and then download the latest version. So, <u>put the script (without changing its name) in a folder together with the NTL Flux Console only</u>.
+
+Usage:
+1. Be sure the NTL Flux Console is closed
+2. Run the script
+3. Open the new NTL Flux Console

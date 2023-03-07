@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.6.1
+
+- Autoreload mutex and exception management
+- Helm Values multi windows support fix
+
 ## 0.6.0
 
 - `KUBECONFIG` Contexts multi-keyword search

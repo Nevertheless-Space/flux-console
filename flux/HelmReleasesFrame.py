@@ -8,8 +8,8 @@ from flux.FluxCRsFrame import FluxCRsFrame
 
 class HelmReleasesFrame(FluxCRsFrame):
 
-  selected_revision = None
-  helm_values_text = None
+  selected_revision = {}
+  helm_values_text = {}
 
   def __init__(self, frame, style):
     self.columns_keys = ("namespace", "helmrelease", "message", "chart", "status", "suspended")
@@ -84,6 +84,12 @@ class HelmReleasesFrame(FluxCRsFrame):
     self.fluxCommand(resource="helmrelease", verb="suspend", options="--all")
     self.fluxCommand(resource="helmrelease", verb="resume", options="--all --wait=false")
 
+  def helmValues_popup_close(self, name, namespace, frame):
+    try:
+      del self.selected_revision[f"{name}.{namespace}"]
+      del self.helm_values_text[f"{name}.{namespace}"]
+    finally: frame.destroy()
+
   def helmValues_popup(self):
 
     helmrelease = self.getFluxCR(self.table.focus())
@@ -96,6 +102,7 @@ class HelmReleasesFrame(FluxCRsFrame):
     frame_secondary_window.title(f"Helm Values: {name}.{namespace}")
     frame_secondary_window.geometry(self.style.getPopupGeometry())
     frame_secondary_window.iconbitmap(self.style.icon_path)
+    frame_secondary_window.protocol("WM_DELETE_WINDOW", func=lambda: self.helmValues_popup_close(name, namespace, frame_secondary_window))
 
     frame_header = Frame(frame_secondary_window)
     frame_header.pack(fill=X, expand=FALSE)
@@ -111,13 +118,13 @@ class HelmReleasesFrame(FluxCRsFrame):
     else:
       helm_history = json.loads(str(history["stdout"][:-1]))
 
-    self.selected_revision = StringVar()
+    self.selected_revision[f"{name}.{namespace}"] = StringVar()
 
-    revisions = ttk.Combobox(frame_header, textvariable=self.selected_revision, font=self.style.getMainFont())
+    revisions = ttk.Combobox(frame_header, textvariable=self.selected_revision[f"{name}.{namespace}"], font=self.style.getMainFont())
     frame_header.option_add('*TCombobox*Listbox.font', self.style.getMainFont())
     revisions["values"] = [f'{revision["revision"]} - {revision["updated"]} - {revision["status"]} - {revision["description"]}' for revision in helm_history]
     revisions["state"] = 'readonly'
-    self.selected_revision.set(revisions["values"][-1])
+    self.selected_revision[f"{name}.{namespace}"].set(revisions["values"][-1])
 
     # Scrollbars
     scroll_v = Scrollbar(frame_content)
@@ -130,19 +137,19 @@ class HelmReleasesFrame(FluxCRsFrame):
     revisions.pack(fill=X, expand=TRUE, padx=20*self.style.multiplier)
 
   def getHelmValuesRevision(self, name, namespace, frame_content, scroll_h, scroll_v):
-    revision = self.selected_revision.get().split(" ")[0]
+    revision = self.selected_revision[f"{name}.{namespace}"].get().split(" ")[0]
     result = utils.generic_command(f"helm get values -n {namespace} {name} --revision {revision}")
     if result["stderr"] != "":
       messagebox.showerror(title="Helm Error", message=result["stderr"])
       frame_content.destroy()
     else:
-      if self.helm_values_text != None: self.helm_values_text.destroy()
-      self.helm_values_text = Text(frame_content, yscrollcommand= scroll_v.set, xscrollcommand = scroll_h.set, wrap= NONE, font=self.style.getTextFont01(), foreground=self.style.text_font01_color)
-      self.helm_values_text.pack(fill=BOTH, expand=TRUE)
-      scroll_h.config(command = self.helm_values_text.xview)
-      scroll_v.config(command = self.helm_values_text.yview)
-      self.helm_values_text.insert(END, f"[REVISION {revision}] " + result["stdout"].replace("  ", "    "))
-      self.helm_values_text.config(state=DISABLED)
+      if self.helm_values_text.get(f"{name}.{namespace}"): self.helm_values_text[f"{name}.{namespace}"].destroy()
+      self.helm_values_text[f"{name}.{namespace}"] = Text(frame_content, yscrollcommand= scroll_v.set, xscrollcommand = scroll_h.set, wrap= NONE, font=self.style.getTextFont01(), foreground=self.style.text_font01_color)
+      self.helm_values_text[f"{name}.{namespace}"].pack(fill=BOTH, expand=TRUE)
+      scroll_h.config(command = self.helm_values_text[f"{name}.{namespace}"].xview)
+      scroll_v.config(command = self.helm_values_text[f"{name}.{namespace}"].yview)
+      self.helm_values_text[f"{name}.{namespace}"].insert(END, f"[REVISION {revision}] " + result["stdout"].replace("  ", "    "))
+      self.helm_values_text[f"{name}.{namespace}"].config(state=DISABLED)
 
   def helmUnistall_popup(self):
     

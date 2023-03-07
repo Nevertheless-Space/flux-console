@@ -27,6 +27,7 @@ class FluxCRsFrame():
   last_column_sort = None
   autoreload_enabled = None
   autoreload_running = None
+  autoreload_mutex = threading.Lock()
   ctx_menu = None
 
   def __init__(self, frame, style):
@@ -62,14 +63,24 @@ class FluxCRsFrame():
     autoreload.pack(side=RIGHT, padx=1*self.style.multiplier)
 
   def autoreload(self):
+    self.autoreload_mutex.acquire()
     if self.autoreload_enabled.get() and not self.autoreload_running: threading.Thread(target=self.autoreloadRoutine).start()
+    self.autoreload_mutex.release()
 
   def autoreloadRoutine(self):
-    self.autoreload_running = True
-    while self.autoreload_enabled.get():
-      self.reloadData()
-      time.sleep(5)
-    self.autoreload_running = False
+    try:
+      self.autoreload_mutex.acquire()
+      self.autoreload_running = True
+      self.autoreload_mutex.release()
+      while self.autoreload_enabled.get():
+        self.reloadData()
+        time.sleep(5)
+    except Exception as e:
+      print(f"[Data Reload Error]: {e}")
+    finally:
+      self.autoreload_mutex.acquire()
+      self.autoreload_running = False
+      self.autoreload_mutex.release()
 
   def initTreeview(self):
     self.table = ttk.Treeview(self.frame_content, columns=self.columns_keys, show='headings')

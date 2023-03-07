@@ -9,8 +9,7 @@ from Home import Home
 
 def closeWindow(frame, style):
   try: icon.deleteIconFile(style.icon_path)
-  except Exception as e: print(e)
-  frame.destroy()
+  finally: frame.destroy()
 
 if __name__ == '__main__':
 

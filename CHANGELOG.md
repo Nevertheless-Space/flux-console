@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.6.2
+
+- Delete icon failure silenced
+
 ## 0.6.1
 
 - Autoreload mutex and exception management

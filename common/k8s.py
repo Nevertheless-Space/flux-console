@@ -62,7 +62,8 @@ class FluxClient():
       if len(plurals) == 0:
         plurals = self.flux_api_groups["sources"]["plurals"]
       for plural in plurals:
-        sources = self.crd.list_cluster_custom_object(self.flux_api_groups["sources"]["group"], version,plural)["items"] + sources
+        try: sources = self.crd.list_cluster_custom_object(self.flux_api_groups["sources"]["group"],version,plural)["items"] + sources
+        except: pass
       return sources
 
   def getAllImages(self, plurals=[]):
@@ -71,5 +72,6 @@ class FluxClient():
       if len(plurals) == 0:
         plurals = self.flux_api_groups["images"]["plurals"]
       for plural in plurals:
-        images = self.crd.list_cluster_custom_object(self.flux_api_groups["images"]["group"], version,plural)["items"] + images
+        try: images = self.crd.list_cluster_custom_object(self.flux_api_groups["images"]["group"],version,plural)["items"] + images
+        except: pass
       return images

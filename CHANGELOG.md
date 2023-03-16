@@ -5,6 +5,7 @@ All notable changes to this project are documented in this file.
 ## 0.6.3
 
 - Fix for when not all resources in the same API-Group support all versions of the Group
+- Word wrap for the content of the context menu `Status` field
 
 ## 0.6.2
 

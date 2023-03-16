@@ -180,7 +180,7 @@ class FluxCRsFrame():
     scroll_h = Scrollbar(frame_content, orient=HORIZONTAL)
     scroll_h.pack(side=BOTTOM, fill=X)
     # Text widget
-    text = Text(frame_content, yscrollcommand= scroll_v.set, xscrollcommand = scroll_h.set, wrap=NONE, font=self.style.getTextFont01(), foreground=self.style.text_font01_color)
+    text = Text(frame_content, yscrollcommand= scroll_v.set, xscrollcommand = scroll_h.set, wrap="word", font=self.style.getTextFont01(), foreground=self.style.text_font01_color)
 
     text.pack(fill=BOTH, expand=TRUE)
     # Attact the scrollbar with the text widget

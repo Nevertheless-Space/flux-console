@@ -98,6 +98,14 @@ class FluxCRsFrame():
   def loadData(self):
     raise NotImplementedError("Must be implemented in the Child Class")
 
+  def getStatusCondition(self, resource):
+    try:
+      for condition in resource["status"]["conditions"]:
+        if condition["status"].lower() == "false": return condition
+      return resource["status"]["conditions"][0]
+    except:
+      return {"status": "-", "message": "-"}
+
   def reloadData(self):
     self.loadData()
     self.search(self.search_entry.get(), update=False)

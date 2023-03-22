@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.6.4
+
+- Status Column of Flux Resources has been fixed: some failure conditions were not detected correctly
+
 ## 0.6.3
 
 - Fix for when not all resources in the same API-Group support all versions of the Group

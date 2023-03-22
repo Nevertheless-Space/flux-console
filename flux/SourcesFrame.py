@@ -43,22 +43,15 @@ class SourcesFrame(FluxCRsFrame):
           suspended = str(self.fluxcrs[index]["spec"]["suspend"])
         except:
           suspended = "False"
-        try:
-          message = self.fluxcrs[index]["status"]["conditions"][0]["message"]
-        except:
-          message = "-"
-        try:
-          status = self.fluxcrs[index]["status"]["conditions"][0]["status"]
-        except:
-          status = "-"
-
+        
+        status_condition = self.getStatusCondition(self.fluxcrs[index])
         item = {
           "index": index,
           "type": self.fluxcrs[index]["kind"],
           "namespace": self.fluxcrs[index]["metadata"]["namespace"],
           "source": self.fluxcrs[index]["metadata"]["name"],
-          "message": message,
-          "status": status,
+          "message": status_condition["message"],
+          "status": status_condition["status"],
           "suspended": suspended,
         }
         self.table_data.append(item)

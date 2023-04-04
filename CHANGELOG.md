@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.6.5
+
+- Current status fix: now the `Status` and `Message` column is taken from the condition with `type: Ready`
+
 ## 0.6.4
 
 - Status Column of Flux Resources has been fixed: some failure conditions were not detected correctly

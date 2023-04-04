@@ -101,7 +101,7 @@ class FluxCRsFrame():
   def getStatusCondition(self, resource):
     try:
       for condition in resource["status"]["conditions"]:
-        if condition["status"].lower() == "false": return condition
+        if condition["type"].lower() == "ready": return condition
       return resource["status"]["conditions"][0]
     except:
       return {"status": "-", "message": "-"}

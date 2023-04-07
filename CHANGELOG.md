@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.7.0
+
+- The availability of a new version has been added in the title of the main window
+
 ## 0.6.5
 
 - Current status fix: now the `Status` and `Message` column is taken from the condition with `type: Ready`

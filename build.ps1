@@ -1,11 +1,15 @@
 $version = "X.X.X"
 
+$venv = Get-ChildItem -Directory -Filter *.venv | select -First 1 -ExpandProperty Name
+$pip = "$PWD/$venv/Scripts/pip.exe"
+$python = "$PWD/$venv/Scripts/python.exe"
+
 Remove-Item -LiteralPath ".\dist" -Force -Recurse
 
-pip3 install -r requirements.txt
+& $pip install -r requirements.txt
 
 (Get-Content -path .\index.py -Raw) -replace '{{version}}',"$version" | Set-Content -Path .\index.py
 
-python3 -m PyInstaller index.py --name ntl-flux-console --onefile --icon=imgs/ntl.ico -w
+& $python -m PyInstaller index.py --name ntl-flux-console --onefile --icon=imgs/ntl.ico -w
 
 Compress-Archive -Path ".\dist\*" -DestinationPath ".\dist\ntl-flux-console-windows-$version.zip"

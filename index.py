@@ -10,7 +10,7 @@ import semver
 from Home import Home
 
 def getTitle():
-  current_version = "{{version}}"
+  current_version = "0.0.0"
   url = "https://github.com/Nevertheless-Space/flux-console/releases/latest"
   response = requests.head(url=url)
   latest_version = response.next.url.split("/")[-1]

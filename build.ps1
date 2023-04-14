@@ -8,7 +8,7 @@ Remove-Item -LiteralPath ".\dist" -Force -Recurse
 
 & $pip install -r requirements.txt
 
-(Get-Content -path .\index.py -Raw) -replace '{{version}}',"$version" | Set-Content -Path .\index.py
+(Get-Content -path .\index.py -Raw) -replace "0.0.0","$version" | Set-Content -NoNewline -Path .\index.py
 
 & $python -m PyInstaller index.py --name ntl-flux-console --onefile --icon=imgs/ntl.ico -w
 

@@ -237,7 +237,7 @@ class FluxCRsFrame():
     _tmp = copy.deepcopy(fluxcr)
 
     del _tmp["status"]
-    del _tmp["metadata"]["managedFields"]
+    if _tmp["metadata"].get("managedFields"): del _tmp["metadata"]["managedFields"]
     del _tmp["metadata"]["creationTimestamp"]
     if _tmp["metadata"].get("finalizers"): del _tmp["metadata"]["finalizers"]
     del _tmp["metadata"]["generation"]

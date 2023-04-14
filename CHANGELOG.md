@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.7.1
+
+- `ImageUpdateAutomation` Resources missing in the `Image Automation` tab: fixed
+- Manifests for Image Automation Resources are not shown after the click in the context menu: fixed
+- Minor improvements
+
 ## 0.7.0
 
 - The availability of a new version has been added in the title of the main window

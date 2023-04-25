@@ -261,6 +261,14 @@ class FluxCRsFrame():
       self.updateTable()
       self.table.heading(column_id, command=lambda: self.sortColumn(column_id=column_id, reverse=not reverse))
 
+  def match_found(self, text_1, text_2):
+    if text_1[0] == '!':
+      if text_1[1:] not in text_2: return True
+      else: return False
+    else:
+      if text_1 in text_2: return True
+      else: return False
+
   def search(self, text, update=True, values_start_index=1, values_end_index=-1):
     if text != '':
       current = self.table_data
@@ -270,23 +278,17 @@ class FluxCRsFrame():
         row = " ".join(list(item.values())[values_start_index:values_end_index]).lower()
         matched = True
         for keyword in text.lower().split(' '):
-          if keyword[0] == '!':
-            if matched and keyword[1:] not in row: continue
-            else:
-              matched = False
-              break
-          elif ':' in keyword:
+          if ':' in keyword:
             tmp = keyword.split(':')
-            if matched and tmp[1].lower() == item[tmp[0]].lower(): continue
+            if matched and self.match_found(tmp[1], item[tmp[0]]): continue
             else:
               matched = False
               break
           else:
-            if matched and keyword in row: continue
+            if matched and self.match_found(keyword, row): continue
             else:
               matched = False
               break
-
         if matched: self.table_data.append(item)
       
       if update: self.updateTable()

@@ -5,6 +5,7 @@ All notable changes to this project are documented in this file.
 ## 0.8.0
 
 - New Events Tab
+- Column search improved with partial search and exclusion
 - Minor improvements
 
 ## 0.7.1

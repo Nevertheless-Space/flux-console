@@ -1,8 +1,12 @@
 $version = "X.X.X"
 
 $venv = Get-ChildItem -Directory -Filter *.venv | select -First 1 -ExpandProperty Name
-$pip = "$PWD/$venv/Scripts/pip.exe"
-$python = "$PWD/$venv/Scripts/python.exe"
+
+$bin_folder = "bin"
+$bin_folder_exist = Test-Path -Path "$PWD/$venv/bin"
+if (!$bin_folder_exist) { $bin_folder = "Scripts" }
+$pip = "$PWD/$venv/$bin_folder/pip.exe"
+$python = "$PWD/$venv/$bin_folder/python.exe"
 
 Remove-Item -LiteralPath ".\dist" -Force -Recurse
 

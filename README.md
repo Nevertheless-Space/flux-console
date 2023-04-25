@@ -23,8 +23,9 @@ Words in the search, obtained by splitting on single spaces, will be used in thi
   - All the rows containing all the words in any column, except for the `Suspended` column, will be returned
 - **Exclusion search**: `!<word>` or `!<word1> !<word2> !<word3>`
   - All the rows NOT containing all the words in any column, except for the `Suspended` column, will be returned
-- **Column search**: `helmrelease:myhelmrelease` or `helmrelease:myhelmrelease1 status:true namespace:mynamespace suspended:true`
-  - All the rows with the EXACT match of `<column name>:<column value>` will be returned
+- **Column search**: `helmrelease:myhelmrelease` or `helmrelease:!myhelmrelease` OR `helmrelease:myhelmrelease1 status:!true namespace:mynamespace suspended:!true`
+  - **Filtering**: All the rows containing the specified `keyword` in the specified `column name` will be returned, using the sintax `<column name>:<keyword>`
+  - **Exclusion**: All the rows NOT containing the specified `keyword` in the specified `column name` will be returned, using the sintax `<column name>:!<keyword>`
 - All the concepts previously illustrated can be combined with each other
 
 ### KUBECONFIG Contexts Search
@@ -36,6 +37,12 @@ Words in the search, obtained by splitting on single spaces, will be used in thi
   - All the KUBECONFIG Contexts containing all the words will be returned
 
 The search will be triggered by the `ENTER` button pression.
+
+## Limitations
+
+### Incomplete KUBECONFIG file
+
+In case of KUBECONFIG file with external Authentication, for instance with `kubelogin`, the flux-console will not be able to authenticate to use the Kubernetes SDK.
 
 ## Utils
 

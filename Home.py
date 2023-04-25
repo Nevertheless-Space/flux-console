@@ -8,6 +8,7 @@ from flux.KustomizationsFrame import KustomizationsFrame
 from flux.HelmReleasesFrame import HelmReleasesFrame
 from flux.SourcesFrame import SourcesFrame
 from flux.ImageAutomationFrame import ImageAutomationFrame
+from flux.EventsFrame import EventsFrame
 
 class Home():
 
@@ -25,6 +26,7 @@ class Home():
   kustomizations = None
   helmreleases = None
   imageautomations = None
+  events = None
 
   def __init__(self, frame, style):
     self.style = style
@@ -147,6 +149,11 @@ class Home():
     self.imageautomations = ImageAutomationFrame(images_frame, self.style)
     tabs.add(images_frame, text="Image Automation")
 
+    events_frame = ttk.Frame(tabs)
+    events_frame.pack(fill=BOTH, expand=TRUE)
+    self.events = EventsFrame(events_frame, self.style)
+    tabs.add(events_frame, text="Events")
+
   def initDashboard(self, frame):
 
     self.deleteContent(frame)
@@ -187,6 +194,7 @@ class Home():
       if self.kustomizations != None: self.kustomizations.k8s.clientInit()
       if self.helmreleases != None: self.helmreleases.k8s.clientInit()
       if self.imageautomations != None: self.imageautomations.k8s.clientInit()
+      if self.events != None: self.events.k8s.clientInit()
       self.initKubecontexts()
     except Exception as e:
       messagebox.showerror(title="Kubernetes API Error", message=e)

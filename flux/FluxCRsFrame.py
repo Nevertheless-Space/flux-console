@@ -261,13 +261,13 @@ class FluxCRsFrame():
       self.updateTable()
       self.table.heading(column_id, command=lambda: self.sortColumn(column_id=column_id, reverse=not reverse))
 
-  def search(self, text, update=True):
+  def search(self, text, update=True, values_start_index=1, values_end_index=-1):
     if text != '':
       current = self.table_data
       self.table_data = []
       
       for item in current:
-        row = " ".join(list(item.values())[1:-1]).lower()
+        row = " ".join(list(item.values())[values_start_index:values_end_index]).lower()
         matched = True
         for keyword in text.lower().split(' '):
           if keyword[0] == '!':

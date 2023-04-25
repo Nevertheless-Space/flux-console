@@ -10,6 +10,7 @@ class FluxClient():
 
   flux_api_groups = None
   crd = None
+  events = None
 
   def __init__(self):
     try: self.clientInit()
@@ -39,6 +40,7 @@ class FluxClient():
       }
     }
     self.crd = client.CustomObjectsApi()
+    self.events = client.CoreV1Api()
 
   def getCRDVersion(self, target_group):
       for group in client.ApisApi().get_api_versions().groups:
@@ -73,3 +75,6 @@ class FluxClient():
         try: images = self.crd.list_cluster_custom_object(self.flux_api_groups["images"]["group"],version,plural)["items"] + images
         except: pass
     return images
+  
+  def getAllEvents(self):
+    return self.events.list_event_for_all_namespaces().items

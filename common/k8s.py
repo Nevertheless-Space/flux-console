@@ -76,5 +76,5 @@ class FluxClient():
         except: pass
     return images
   
-  def getAllEvents(self):
-    return self.events.list_event_for_all_namespaces().items
+  def getAllEvents(self, limit=25):
+    return self.events.list_event_for_all_namespaces(limit=limit).items

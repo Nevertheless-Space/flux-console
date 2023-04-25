@@ -59,8 +59,8 @@ class FluxCRsFrame():
     self.autoreload_enabled = BooleanVar()
     autoreload_label = ttk.Label(self.frame_topbar, text="Autoreload:")
     autoreload_label.pack(side=LEFT, padx=5*self.style.multiplier)
-    autoreload = ttk.Checkbutton(self.frame_topbar, command=self.autoreload, variable=self.autoreload_enabled, onvalue=True, offvalue=False, takefocus=False)
-    autoreload.pack(side=RIGHT, padx=1*self.style.multiplier)
+    self.autoreload_checkbutton = ttk.Checkbutton(self.frame_topbar, command=self.autoreload, variable=self.autoreload_enabled, onvalue=True, offvalue=False, takefocus=False)
+    self.autoreload_checkbutton.pack(side=LEFT, padx=1*self.style.multiplier)
 
   def autoreload(self):
     self.autoreload_mutex.acquire()

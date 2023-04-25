@@ -6,9 +6,22 @@ from flux.FluxCRsFrame import FluxCRsFrame
 
 class EventsFrame(FluxCRsFrame):
 
+  events_limit = 25
+
   def __init__(self, frame, style):
     self.columns_keys = ("timestamp", "kind", "namespace", "name", "type", "message")
+    self.last_column_sort = {"column_id": "timestamp", "reverse": True}
     super().__init__(frame, style)
+
+  def initTopBar(self):
+    super().initTopBar()
+    self.autoreload_checkbutton.pack(side=LEFT, padx=0)
+    events_limit_label = ttk.Label(self.frame_topbar, text="Limit:")
+    events_limit_label.pack(side=LEFT, padx=5*self.style.multiplier)
+    self.events_limit_entry = ttk.Entry(self.frame_topbar, width=2*self.style.multiplier, font=self.style.getMainFont(), justify=CENTER)
+    self.events_limit_entry.insert(END, self.events_limit)
+    self.events_limit_entry.pack(side=LEFT, fill=NONE, expand=FALSE, padx=4*self.style.multiplier)
+    self.events_limit_entry.bind('<Return>', lambda event: self.reloadData())
 
   def initTreeview(self):
     super().initTreeview()
@@ -30,7 +43,7 @@ class EventsFrame(FluxCRsFrame):
 
   def loadData(self):
     from kubernetes import client    
-    self.fluxcrs = self.k8s.getAllEvents()
+    self.fluxcrs = self.k8s.getAllEvents(limit=int(self.events_limit_entry.get()))
     self.table_data = []
     try:
       for index in range(len(self.fluxcrs)):

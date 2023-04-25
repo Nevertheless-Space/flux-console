@@ -262,6 +262,8 @@ class FluxCRsFrame():
       self.table.heading(column_id, command=lambda: self.sortColumn(column_id=column_id, reverse=not reverse))
 
   def match_found(self, text_1, text_2):
+    text_1 = text_1.lower()
+    text_2 = text_2.lower()
     if text_1[0] == '!':
       if text_1[1:] not in text_2: return True
       else: return False

@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.8.1
+
+- Events tab UI improved for 1080p resolution
+
 ## 0.8.0
 
 - New Events Tab

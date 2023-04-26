@@ -17,10 +17,10 @@ class EventsFrame(FluxCRsFrame):
     super().initTopBar()
     self.autoreload_checkbutton.pack(side=LEFT, padx=0)
     events_limit_label = ttk.Label(self.frame_topbar, text="Limit:")
-    events_limit_label.pack(side=LEFT, padx=5*self.style.multiplier)
-    self.events_limit_entry = ttk.Entry(self.frame_topbar, width=2*self.style.multiplier, font=self.style.getMainFont(), justify=CENTER)
+    events_limit_label.pack(side=LEFT, padx=pow(self.style.multiplier,2))
+    self.events_limit_entry = ttk.Entry(self.frame_topbar, width=2+int(4/self.style.multiplier), font=self.style.getMainFont(), justify=CENTER)
     self.events_limit_entry.insert(END, self.events_limit)
-    self.events_limit_entry.pack(side=LEFT, fill=NONE, expand=FALSE, padx=4*self.style.multiplier)
+    self.events_limit_entry.pack(side=LEFT, fill=NONE, expand=FALSE, padx=4+int(2*self.style.multiplier))
     self.events_limit_entry.bind('<Return>', lambda event: self.reloadData())
 
   def initTreeview(self):

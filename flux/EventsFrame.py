@@ -53,11 +53,11 @@ class EventsFrame(FluxCRsFrame):
         item = {
           "index": index,
           "timestamp": str(timestamp),
-          "kind": self.fluxcrs[index].involved_object.kind,
-          "namespace": self.fluxcrs[index].involved_object.namespace,
-          "name": self.fluxcrs[index].involved_object.name,
-          "type": self.fluxcrs[index].type,
-          "message": self.fluxcrs[index].message
+          "kind": str(self.fluxcrs[index].involved_object.kind),
+          "namespace": str(self.fluxcrs[index].involved_object.namespace),
+          "name": str(self.fluxcrs[index].involved_object.name),
+          "type": str(self.fluxcrs[index].type),
+          "message": str(self.fluxcrs[index].message)
         }
         self.table_data.append(item)
     except Exception as e:

@@ -82,6 +82,7 @@ class FluxCRsFrame():
       print(f"[Data Reload Error]: {e}")
     finally:
       self.autoreload_mutex.acquire()
+      self.autoreload_enabled.set(value=False)
       self.autoreload_running = False
       self.autoreload_mutex.release()
 
@@ -268,12 +269,15 @@ class FluxCRsFrame():
   def match_found(self, text_1, text_2):
     text_1 = text_1.lower()
     text_2 = text_2.lower()
-    if text_1[0] == '!':
-      if text_1[1:] not in text_2: return True
-      else: return False
+    if text_1 != '':
+      if text_1[0] == '!':
+        if text_1[1:] not in text_2: return True
+        else: return False
+      else:
+        if text_1 in text_2: return True
+        else: return False
     else:
-      if text_1 in text_2: return True
-      else: return False
+      return True
 
   def search(self, text, update=True, values_start_index=1, values_end_index=-1):
     if text != '':

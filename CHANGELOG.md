@@ -9,6 +9,9 @@ All notable changes to this project are documented in this file.
   - New `Revision` column for the `HelmReleases` section
   - Search results counter
 - UI tuning
+- Bug fixing:
+  - Failures due to additional spaces are now handled without impacting the returned results
+  - The scenarios in which autoreload was active but the autoreload routine had failed have been handled, now the autoreload checkbox faithfully reproduces the state of the underlying routine
 
 ## 0.8.2
 

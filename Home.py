@@ -53,7 +53,8 @@ class Home():
     self.menubar.add_cascade(label="Menu", menu=self.menubar_main)
 
     self.menubar_reconcile = Menu(self.menubar_main, tearoff=0)
-    self.menubar_reconcile.add_command(label="All GitRepository", command=lambda: threading.Thread(target=self.reconcileGitRepositories_popup).start())
+    self.menubar_reconcile.add_command(label="All GitRepository", command=lambda: threading.Thread(target=self.reconcileallgitrepository_popup).start())
+    self.menubar_reconcile.add_command(label="All ImageRepository", command=lambda: threading.Thread(target=self.reconcileallimagerepository_popup).start())
     self.menubar_main.add_cascade(label="Reconcile", menu=self.menubar_reconcile)
 
     self.menubar_apparance = Menu(self.menubar_main, tearoff=0)
@@ -169,24 +170,33 @@ class Home():
     frame_bottom.pack(fill=BOTH, expand=TRUE, side=BOTTOM)
     self.helmreleases = HelmReleasesFrame(frame_bottom, self.style)
 
-  def reconcileGitRepositories(self):
+  def reconcileallgitrepository_popup(self):
+    popup_frame = utils.outputRedirectedPopup(title="All GitRepository Reconciliation", style=self.style)
     k8_client = k8s.FluxClient()
     gitrepositories = k8_client.getAllSources(plurals=["gitrepositories"])
-
-    first = True
     try:
       for gitrepository in gitrepositories:
         command = f'flux reconcile source git -n {gitrepository["metadata"]["namespace"]} {gitrepository["metadata"]["name"]}'
-        if not first: print()
-        else: first = False
-        print(f"{command}:")
-        utils.redirectOutputCommand(command, stderr=True, decode_error_replacement=".").join()
-    except: pass
+        print(command)
+        result = utils.generic_command(command)
+        print(result["stderr"])
+      popup_frame.mainloop()
+    except:
+      pass
 
-  def reconcileGitRepositories_popup(self):
-    popup_frame = utils.outputRedirectedPopup(title="All GitRepository Reconciliation", style=self.style)
-    self.reconcileGitRepositories()
-    popup_frame.mainloop()
+  def reconcileallimagerepository_popup(self):
+    popup_frame = utils.outputRedirectedPopup(title="All ImageRepository Reconciliation", style=self.style)
+    k8_client = k8s.FluxClient()
+    imagerepositories = k8_client.getAllImages(plurals=["imagerepositories"])
+    try:
+      for imagerepository in imagerepositories:
+        command = f'flux reconcile image repository -n {imagerepository["metadata"]["namespace"]} {imagerepository["metadata"]["name"]}'
+        print(command)
+        result = utils.generic_command(command)
+        print(result["stderr"])
+      popup_frame.mainloop()
+    except:
+      pass
 
   def kubeconfigReload(self):
     try:

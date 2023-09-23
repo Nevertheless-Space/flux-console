@@ -8,10 +8,12 @@ All notable changes to this project are documented in this file.
   - `HelmRelease` deletion in the `Danger` context menu
   - New `Revision` column for the `HelmReleases` section
   - Search results counter
+  - New utility for reconciling all `ImageRepository` is now available in `menu>reconcile`
 - UI tuning
 - Bug fixing:
   - Failures due to additional spaces are now handled without impacting the returned results
   - The scenarios in which autoreload was active but the autoreload routine had failed have been handled, now the autoreload checkbox faithfully reproduces the state of the underlying routine
+- Rework of the routine for reconciling all `GitRepository`
 
 ## 0.8.2
 

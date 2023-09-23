@@ -22,6 +22,7 @@ class FluxCRsFrame():
 
   columns_keys = None
   table = None
+  table_count_label = None
   scrollbar = None
   search_entry = None
   last_column_sort = None
@@ -42,25 +43,27 @@ class FluxCRsFrame():
 
   def initFrames(self, frame):
     self.frame_topbar = Frame(frame)
-    self.frame_topbar.pack(fill=X, side=TOP, padx=15*self.style.multiplier)
+    self.frame_topbar.pack(fill=X, side=TOP, padx=[self.style.fringe_padding, 3*self.style.fringe_padding], pady=[self.style.fringe_padding, 0])
     self.frame_content = Frame(frame)
-    self.frame_content.pack(fill=BOTH, expand=TRUE, side=LEFT)
+    self.frame_content.pack(fill=BOTH, expand=TRUE, side=LEFT, padx=[self.style.fringe_padding, 0], pady=self.style.fringe_padding)
     self.frame_scrollbar = Frame(frame)
     self.frame_scrollbar.pack(fill=Y, expand=Y)
 
   def initTopBar(self):
-    search_label = ttk.Label(self.frame_topbar, text="Search:  ")
+    self.table_count_label = ttk.Label(self.frame_topbar, text="[-]")
+    self.table_count_label.pack(side=LEFT)
+    search_label = ttk.Label(self.frame_topbar, text="Search:")
     search_label.pack(side=LEFT)
     self.search_entry = ttk.Entry(self.frame_topbar, font=self.style.getMainFont())
-    self.search_entry.pack(fill=X, expand=TRUE, side=LEFT)
+    self.search_entry.pack(fill=X, expand=TRUE, side=LEFT, padx=self.style.fringe_padding)
     self.search_entry.bind('<Return>', lambda event: self.reloadData())
     button = ttk.Button(self.frame_topbar, text="Reload", command=self.reloadData)
-    button.pack(side=LEFT, padx=5*self.style.multiplier)
+    button.pack(side=LEFT)
     self.autoreload_enabled = BooleanVar()
     autoreload_label = ttk.Label(self.frame_topbar, text="Autoreload:")
-    autoreload_label.pack(side=LEFT, padx=5*self.style.multiplier)
+    autoreload_label.pack(side=LEFT, padx=self.style.fringe_padding)
     self.autoreload_checkbutton = ttk.Checkbutton(self.frame_topbar, command=self.autoreload, variable=self.autoreload_enabled, onvalue=True, offvalue=False, takefocus=False)
-    self.autoreload_checkbutton.pack(side=LEFT, padx=1*self.style.multiplier)
+    self.autoreload_checkbutton.pack(side=LEFT)
 
   def autoreload(self):
     self.autoreload_mutex.acquire()
@@ -120,6 +123,7 @@ class FluxCRsFrame():
         row.append(item[key])
       row.append(item["index"])
       self.table.insert('', END, values=row)
+    self.table_count_label["text"] = f"[{len(self.table_data)}]"
 
   def fluxCommand(self, resource, verb, options=""):
     _current = self.table

@@ -7,6 +7,7 @@ class MainStyle():
   icon_path = '$$_temp.ico'
   style = None
   multiplier = None
+  fringe_padding = None
   text = {
     "font": "Calibri",
     "size_normal": 7,
@@ -25,6 +26,8 @@ class MainStyle():
 
     self.multiplier = 1
     if self.screen_width > 1920: self.multiplier = 2
+
+    self.fringe_padding = 5 * self.multiplier
 
     self.initWidgets()
 

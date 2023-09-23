@@ -7,6 +7,8 @@ All notable changes to this project are documented in this file.
 - New features:
   - `HelmRelease` deletion in the `Danger` context menu
   - New `Revision` column for the `HelmReleases` section
+  - Search results counter
+- UI tuning
 
 ## 0.8.2
 

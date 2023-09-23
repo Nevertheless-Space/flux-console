@@ -31,9 +31,9 @@ class Home():
   def __init__(self, frame, style):
     self.style = style
 
-    frame_topbar = Frame(frame, height=50, padx=7.5*self.style.multiplier)
+    frame_topbar = Frame(frame, height=50, padx=self.style.fringe_padding, pady=self.style.fringe_padding)
     frame_topbar.pack(fill=X, side=TOP)
-    frame_divider = Frame(frame, height=5*self.style.multiplier)
+    frame_divider = ttk.Separator(frame, orient='horizontal')
     frame_divider.pack(fill=X, side=TOP)
     frame_content = Frame(frame)
     frame_content.pack(fill=BOTH, expand=TRUE, side=BOTTOM)
@@ -75,7 +75,7 @@ class Home():
 
     self.kubecontexts_combobox.bind('<<ComboboxSelected>>', lambda event: self.kubecontextSelected())
     self.kubecontexts_combobox.bind('<Return>', self.kubecontextsFilter)
-    self.kubecontexts_combobox.pack(fill=X, expand=FALSE, padx=12.5*self.style.multiplier)
+    self.kubecontexts_combobox.pack(fill=X, expand=FALSE, padx=[self.style.fringe_padding, self.style.fringe_padding*3])
 
   def initKubecontexts(self):
     contexts_result = utils.generic_command("kubectl config view -o=jsonpath='{.contexts[*].name}'")
@@ -162,8 +162,8 @@ class Home():
     frame_top.pack(fill=X, expand=FALSE, side=TOP)
     self.kustomizations = KustomizationsFrame(frame_top, self.style)
 
-    frame_divider = Frame(frame, height=5*self.style.multiplier)
-    frame_divider.pack(fill=X, side=TOP)
+    frame_divider = ttk.Separator(frame, orient='horizontal')
+    frame_divider.pack(fill=X, side=TOP, padx=[self.style.fringe_padding, 4*self.style.fringe_padding])
 
     frame_bottom = Frame(frame)
     frame_bottom.pack(fill=BOTH, expand=TRUE, side=BOTTOM)

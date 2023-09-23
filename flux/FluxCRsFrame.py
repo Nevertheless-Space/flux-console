@@ -22,6 +22,7 @@ class FluxCRsFrame():
 
   columns_keys = None
   table = None
+  table_count_label = None
   scrollbar = None
   search_entry = None
   last_column_sort = None
@@ -42,25 +43,27 @@ class FluxCRsFrame():
 
   def initFrames(self, frame):
     self.frame_topbar = Frame(frame)
-    self.frame_topbar.pack(fill=X, side=TOP, padx=15*self.style.multiplier)
+    self.frame_topbar.pack(fill=X, side=TOP, padx=[self.style.fringe_padding, 3*self.style.fringe_padding], pady=[self.style.fringe_padding, 0])
     self.frame_content = Frame(frame)
-    self.frame_content.pack(fill=BOTH, expand=TRUE, side=LEFT)
+    self.frame_content.pack(fill=BOTH, expand=TRUE, side=LEFT, padx=[self.style.fringe_padding, 0], pady=self.style.fringe_padding)
     self.frame_scrollbar = Frame(frame)
     self.frame_scrollbar.pack(fill=Y, expand=Y)
 
   def initTopBar(self):
-    search_label = ttk.Label(self.frame_topbar, text="Search:  ")
+    self.table_count_label = ttk.Label(self.frame_topbar, text="[-]")
+    self.table_count_label.pack(side=LEFT)
+    search_label = ttk.Label(self.frame_topbar, text="Search:")
     search_label.pack(side=LEFT)
     self.search_entry = ttk.Entry(self.frame_topbar, font=self.style.getMainFont())
-    self.search_entry.pack(fill=X, expand=TRUE, side=LEFT)
+    self.search_entry.pack(fill=X, expand=TRUE, side=LEFT, padx=self.style.fringe_padding)
     self.search_entry.bind('<Return>', lambda event: self.reloadData())
     button = ttk.Button(self.frame_topbar, text="Reload", command=self.reloadData)
-    button.pack(side=LEFT, padx=5*self.style.multiplier)
+    button.pack(side=LEFT)
     self.autoreload_enabled = BooleanVar()
     autoreload_label = ttk.Label(self.frame_topbar, text="Autoreload:")
-    autoreload_label.pack(side=LEFT, padx=5*self.style.multiplier)
+    autoreload_label.pack(side=LEFT, padx=self.style.fringe_padding)
     self.autoreload_checkbutton = ttk.Checkbutton(self.frame_topbar, command=self.autoreload, variable=self.autoreload_enabled, onvalue=True, offvalue=False, takefocus=False)
-    self.autoreload_checkbutton.pack(side=LEFT, padx=1*self.style.multiplier)
+    self.autoreload_checkbutton.pack(side=LEFT)
 
   def autoreload(self):
     self.autoreload_mutex.acquire()
@@ -79,6 +82,7 @@ class FluxCRsFrame():
       print(f"[Data Reload Error]: {e}")
     finally:
       self.autoreload_mutex.acquire()
+      self.autoreload_enabled.set(value=False)
       self.autoreload_running = False
       self.autoreload_mutex.release()
 
@@ -120,6 +124,7 @@ class FluxCRsFrame():
         row.append(item[key])
       row.append(item["index"])
       self.table.insert('', END, values=row)
+    self.table_count_label["text"] = f"[{len(self.table_data)}]"
 
   def fluxCommand(self, resource, verb, options=""):
     _current = self.table
@@ -264,12 +269,15 @@ class FluxCRsFrame():
   def match_found(self, text_1, text_2):
     text_1 = text_1.lower()
     text_2 = text_2.lower()
-    if text_1[0] == '!':
-      if text_1[1:] not in text_2: return True
-      else: return False
+    if text_1 != '':
+      if text_1[0] == '!':
+        if text_1[1:] not in text_2: return True
+        else: return False
+      else:
+        if text_1 in text_2: return True
+        else: return False
     else:
-      if text_1 in text_2: return True
-      else: return False
+      return True
 
   def search(self, text, update=True, values_start_index=1, values_end_index=-1):
     if text != '':
@@ -277,7 +285,9 @@ class FluxCRsFrame():
       self.table_data = []
       
       for item in current:
-        row = " ".join(list(item.values())[values_start_index:values_end_index]).lower()
+        row_list = []
+        for el in list(item.values()): row_list.append(str(el))
+        row = " ".join(row_list[values_start_index:values_end_index]).lower()
         matched = True
         for keyword in text.lower().split(' '):
           if ':' in keyword:

@@ -4,7 +4,9 @@ All notable changes to this project are documented in this file.
 
 ## 0.9.0
 
-- New feature: `HelmRelease` deletion in the `Danger` context menu
+- New features:
+  - `HelmRelease` deletion in the `Danger` context menu
+  - New `Revision` column for the `HelmReleases` section
 
 ## 0.8.2
 

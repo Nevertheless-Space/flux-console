@@ -277,7 +277,9 @@ class FluxCRsFrame():
       self.table_data = []
       
       for item in current:
-        row = " ".join(list(item.values())[values_start_index:values_end_index]).lower()
+        row_list = []
+        for el in list(item.values()): row_list.append(str(el))
+        row = " ".join(row_list[values_start_index:values_end_index]).lower()
         matched = True
         for keyword in text.lower().split(' '):
           if ':' in keyword:

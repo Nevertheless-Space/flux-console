@@ -12,7 +12,7 @@ class HelmReleasesFrame(FluxCRsFrame):
   helm_values_text = {}
 
   def __init__(self, frame, style):
-    self.columns_keys = ("namespace", "helmrelease", "message", "chart", "status", "suspended")
+    self.columns_keys = ("namespace", "helmrelease", "message", "chart", "revision", "status", "suspended")
     super().__init__(frame, style)
 
   def initTreeview(self):
@@ -23,6 +23,8 @@ class HelmReleasesFrame(FluxCRsFrame):
     self.table.heading("message", text="Message", command=lambda: self.sortColumn(column_id="message"))
     self.table.heading("chart", text="Chart", command=lambda: self.sortColumn(column_id="chart"))
     self.table.column("chart", stretch=NO, width=75*self.style.multiplier, minwidth=0, anchor=CENTER)
+    self.table.heading("revision", text="Revision", command=lambda: self.sortColumn(column_id="revision"))
+    self.table.column("revision", stretch=NO, width=75*self.style.multiplier, minwidth=0, anchor=CENTER)
     self.table.heading("status", text="Status", command=lambda: self.sortColumn(column_id="status"))
     self.table.column("status", stretch=NO, width=60*self.style.multiplier, minwidth=0, anchor=CENTER)
     self.table.heading("suspended", text="Suspended", command=lambda: self.sortColumn(column_id="suspended"))
@@ -59,6 +61,8 @@ class HelmReleasesFrame(FluxCRsFrame):
 
         chart = "-"
         if self.fluxcrs[index]["status"].get("lastAttemptedRevision") != None: chart = self.fluxcrs[index]["status"]["lastAttemptedRevision"]
+        revision = -1
+        if self.fluxcrs[index]["status"].get("lastReleaseRevision") != None: revision = self.fluxcrs[index]["status"]["lastReleaseRevision"]
 
         status_condition = self.getStatusCondition(self.fluxcrs[index])
         item = {
@@ -67,6 +71,7 @@ class HelmReleasesFrame(FluxCRsFrame):
           "helmrelease": self.fluxcrs[index]["metadata"]["name"],
           "message": status_condition["message"],
           "chart": chart,
+          "revision": revision,
           "status": status_condition["status"],
           "suspended": suspended,
         }

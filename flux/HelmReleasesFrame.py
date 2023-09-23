@@ -43,6 +43,7 @@ class HelmReleasesFrame(FluxCRsFrame):
     
     self.ctx_menu_danger = Menu(self.ctx_menu, tearoff=0)
     self.ctx_menu_danger.add_command(label="Helm Uninstall", command=self.helmUnistall_popup)
+    self.ctx_menu_danger.add_command(label="Delete HelmRelease", command=lambda: threading.Thread(self.fluxCommandPopup(resource="helmrelease", verb="delete", options="--silent")).start())
     self.ctx_menu.add_cascade(label="Danger", menu=self.ctx_menu_danger)
 
   def loadData(self):

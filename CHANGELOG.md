@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.10.0
+
+- New feature: Helm Values content search
+
 ## 0.9.0
 
 - New features:

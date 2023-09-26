@@ -105,6 +105,8 @@ class HelmReleasesFrame(FluxCRsFrame):
 
     frame_header = Frame(frame_secondary_window)
     frame_header.pack(fill=X, expand=FALSE)
+    frame_search = Frame(frame_secondary_window)
+    frame_search.pack(fill=X, expand=FALSE, padx=[self.style.fringe_padding, self.style.fringe_padding*4])
     frame_content = Frame(frame_secondary_window)
     frame_content.pack(fill=BOTH, expand=TRUE)
 
@@ -135,6 +137,18 @@ class HelmReleasesFrame(FluxCRsFrame):
     self.getHelmValuesRevision(name, namespace, frame_content, scroll_h, scroll_v)
     revisions.pack(fill=X, expand=TRUE, padx=20*self.style.multiplier)
 
+    # Content Search
+    ttk.Label(frame_search, text='Text to find:').pack(side=LEFT)
+    search_entry = ttk.Entry(frame_search, font=self.style.getTextFont01())
+    search_entry.pack(side=LEFT, fill=BOTH, expand=TRUE)
+    search_entry.focus_set()
+    search_button = ttk.Button(frame_search, text='Find')
+    search_button.pack(side=RIGHT)
+    current_find_index = StringVar()
+    current_find_index.set('1.0')
+    search_button.config(command=lambda: self.helmValues_popup_search(self.helm_values_text.get(f"{name}.{namespace}"), search_entry, current_find_index))
+    search_entry.bind('<Return>', lambda event: self.helmValues_popup_search(self.helm_values_text.get(f"{name}.{namespace}"), search_entry, current_find_index))
+
   def getHelmValuesRevision(self, name, namespace, frame_content, scroll_h, scroll_v):
     revision = self.selected_revision[f"{name}.{namespace}"].get().split(" ")[0]
     result = utils.generic_command(f"helm get values -n {namespace} {name} --revision {revision}")
@@ -149,6 +163,28 @@ class HelmReleasesFrame(FluxCRsFrame):
       scroll_v.config(command = self.helm_values_text[f"{name}.{namespace}"].yview)
       self.helm_values_text[f"{name}.{namespace}"].insert(END, f"[REVISION {revision}] " + result["stdout"].replace("  ", "    "))
       self.helm_values_text[f"{name}.{namespace}"].config(state=DISABLED)
+
+  def helmValues_popup_search(self, text, search_entry, current_find_index):
+    text.tag_remove('found', '1.0', END)
+    string_to_find = search_entry.get()
+    if string_to_find:
+      current_find_index.set(text.search(string_to_find, current_find_index.get(), nocase=1, stopindex=END))
+      if not current_find_index.get():
+        if current_find_index.get() != '1.0':
+          current_find_index.set('1.0')
+          self.helmValues_popup_search(text, search_entry, current_find_index)
+        else:
+          current_find_index.set('1.0')
+        return
+      
+      lastidx = '%s+%dc' % (current_find_index.get(), len(string_to_find))
+      text.tag_add('found', current_find_index.get(), lastidx)
+
+      text.tag_config('found', foreground='red', underline=True, font=(self.style.getTextFont01() + ("bold",)))
+      text.mark_set("insert", current_find_index.get())
+      text.see("insert")
+      current_find_index.set(lastidx)
+    search_entry.focus_set()
 
   def helmUnistall_popup(self):
     

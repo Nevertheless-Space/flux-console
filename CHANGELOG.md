@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.11.0
+
+- Kubernetes SDK Upgraded to the version `28.1.0`
+  - Now some external authentication provider should work, for instance: `kubelogin`
+
 ## 0.10.0
 
 - New feature: Helm Values content search

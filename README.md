@@ -38,12 +38,6 @@ Words in the search, obtained by splitting on single spaces, will be used in thi
 
 The search will be triggered by the `ENTER` button pression.
 
-## Limitations
-
-### Incomplete KUBECONFIG file
-
-In case of KUBECONFIG file with external Authentication, for instance with `kubelogin`, the flux-console will not be able to authenticate to use the Kubernetes SDK.
-
 ## Utils
 
 ### get-latest-version.ps1

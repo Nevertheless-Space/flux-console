@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.12.0
+
+- Flux `2.2.3` support
+  - HelmRelease:
+    - Contextual menu new fields: `force` and `reset`
+    - New `status` manifest field alignment
+- Flux Objects with different API versions fix
+- New global menu button: `Menu > Reconcile > Flux-System`
+- Minor improvements
+
 ## 0.11.0
 
 - Kubernetes SDK Upgraded to the version `28.1.0`

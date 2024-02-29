@@ -53,6 +53,7 @@ class Home():
     self.menubar.add_cascade(label="Menu", menu=self.menubar_main)
 
     self.menubar_reconcile = Menu(self.menubar_main, tearoff=0)
+    self.menubar_reconcile.add_command(label="Flux-System", command=lambda: threading.Thread(target=self.reconcilefluxsystem_popup).start())
     self.menubar_reconcile.add_command(label="All GitRepository", command=lambda: threading.Thread(target=self.reconcileallgitrepository_popup).start())
     self.menubar_reconcile.add_command(label="All ImageRepository", command=lambda: threading.Thread(target=self.reconcileallimagerepository_popup).start())
     self.menubar_main.add_cascade(label="Reconcile", menu=self.menubar_reconcile)
@@ -169,6 +170,17 @@ class Home():
     frame_bottom = Frame(frame)
     frame_bottom.pack(fill=BOTH, expand=TRUE, side=BOTTOM)
     self.helmreleases = HelmReleasesFrame(frame_bottom, self.style)
+
+  def reconcilefluxsystem_popup(self):
+    popup_frame = utils.outputRedirectedPopup(title="Flux-System Reconciliation", style=self.style)
+    try:
+      command = f'flux reconcile source git -n flux-system flux-system'
+      print(command)
+      result = utils.generic_command(command)
+      print(result["stderr"])
+      popup_frame.mainloop()
+    except:
+      pass
 
   def reconcileallgitrepository_popup(self):
     popup_frame = utils.outputRedirectedPopup(title="All GitRepository Reconciliation", style=self.style)

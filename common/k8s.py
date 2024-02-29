@@ -43,30 +43,34 @@ class FluxClient():
     self.events = client.CoreV1Api()
 
   def getCRDVersion(self, target_group):
-      for group in client.ApisApi().get_api_versions().groups:
-        if group.name == target_group:
-          versions = []
-          for group_version in group.versions:
-            versions.append(group_version.version)
-          return versions
+    for group in client.ApisApi().get_api_versions().groups:
+      if group.name == target_group:
+        versions = []
+        for group_version in group.versions:
+          versions.append(group_version.version)
+        return versions
 
   def getAllKustomizations(self):
+    kustomizations = []
     for version in self.flux_api_groups["kustomizations"]["version"]:
-      return self.crd.list_cluster_custom_object(self.flux_api_groups["kustomizations"]["group"], version,"kustomizations")["items"]
+      kustomizations = self.crd.list_cluster_custom_object(self.flux_api_groups["kustomizations"]["group"], version,"kustomizations")["items"] + kustomizations
+    return kustomizations
 
   def getAllHelmReleases(self):
+    helmreleases = []
     for version in self.flux_api_groups["helmreleases"]["version"]:
-      return self.crd.list_cluster_custom_object(self.flux_api_groups["helmreleases"]["group"], version,"helmreleases")["items"]
+      helmreleases = self.crd.list_cluster_custom_object(self.flux_api_groups["helmreleases"]["group"], version,"helmreleases")["items"] + helmreleases
+    return helmreleases
 
   def getAllSources(self, plurals=[]):
+    sources = []
     for version in self.flux_api_groups["sources"]["version"]:
-      sources = []
       if len(plurals) == 0:
         plurals = self.flux_api_groups["sources"]["plurals"]
       for plural in plurals:
         try: sources = self.crd.list_cluster_custom_object(self.flux_api_groups["sources"]["group"],version,plural)["items"] + sources
         except: pass
-      return sources
+    return sources
 
   def getAllImages(self, plurals=[]):
     images = []

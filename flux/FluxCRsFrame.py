@@ -248,6 +248,10 @@ class FluxCRsFrame():
     del _tmp["metadata"]["generation"]
     del _tmp["metadata"]["resourceVersion"]
     del _tmp["metadata"]["uid"]
+    if _tmp["metadata"].get("annotations"):
+      if _tmp["metadata"]["annotations"].get("reconcile.fluxcd.io/requestedAt"):
+        del _tmp["metadata"]["annotations"]["reconcile.fluxcd.io/requestedAt"]
+        if len(_tmp["metadata"]["annotations"]) == 0: del _tmp["metadata"]["annotations"]
 
     text.insert(END, yaml.dump(_tmp).replace("  ", "    "))
     text.config(state=DISABLED)

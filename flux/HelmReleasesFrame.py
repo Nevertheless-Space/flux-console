@@ -40,6 +40,8 @@ class HelmReleasesFrame(FluxCRsFrame):
     self.ctx_menu.add_command(label="Suspend", command=lambda: self.fluxCommand(resource="helmrelease", verb="suspend", options="--all"))
     self.ctx_menu.add_command(label="Resume", command=lambda: self.fluxCommand(resource="helmrelease", verb="resume", options="--all --wait=false"))
     self.ctx_menu.add_command(label="Suspend + Resume", command=self.suspendResume)
+    self.ctx_menu.add_command(label="Reset", command=self.reset)
+    self.ctx_menu.add_command(label="Force", command=self.force)
     self.ctx_menu.add_separator()
     self.ctx_menu.add_command(label="Helm Values", command=lambda: threading.Thread(target=self.helmValues_popup).start())
     
@@ -60,9 +62,13 @@ class HelmReleasesFrame(FluxCRsFrame):
           suspended = "False"
 
         chart = "-"
-        if self.fluxcrs[index]["status"].get("lastAttemptedRevision") != None: chart = self.fluxcrs[index]["status"]["lastAttemptedRevision"]
         revision = -1
-        if self.fluxcrs[index]["status"].get("lastReleaseRevision") != None: revision = self.fluxcrs[index]["status"]["lastReleaseRevision"]
+        if self.fluxcrs[index]["status"].get("history") != None:
+          if self.fluxcrs[index]["status"]["history"][0].get("chartVersion") != None: chart = self.fluxcrs[index]["status"]["history"][0]["chartVersion"]
+          if self.fluxcrs[index]["status"]["history"][0].get("version") != None: revision = self.fluxcrs[index]["status"]["history"][0]["version"]
+        else:
+          if self.fluxcrs[index]["status"].get("lastAttemptedRevision") != None: chart = self.fluxcrs[index]["status"]["lastAttemptedRevision"]
+          if self.fluxcrs[index]["status"].get("lastReleaseRevision") != None: revision = self.fluxcrs[index]["status"]["lastReleaseRevision"]
 
         status_condition = self.getStatusCondition(self.fluxcrs[index])
         item = {
@@ -82,6 +88,12 @@ class HelmReleasesFrame(FluxCRsFrame):
   def suspendResume(self):
     self.fluxCommand(resource="helmrelease", verb="suspend", options="--all")
     self.fluxCommand(resource="helmrelease", verb="resume", options="--all --wait=false")
+  
+  def reset(self):
+    self.fluxCommand(resource="helmrelease", verb="reconcile", options="--reset")
+  
+  def force(self):
+    self.fluxCommand(resource="helmrelease", verb="reconcile", options="--force")
 
   def helmValues_popup_close(self, name, namespace, frame):
     try:

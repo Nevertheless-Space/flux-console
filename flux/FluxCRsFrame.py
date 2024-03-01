@@ -149,7 +149,7 @@ class FluxCRsFrame():
     if len(selected_items) == 0:
       messagebox.showerror(title="Empty Selection", message="No object selected!")
       return
-    popup_frame = utils.outputRedirectedPopup(title=f"{resource} {verb}", style=self.style)
+    popup_frame = utils.outputRedirectedPopup(title=f"{resource} {verb} {options}", style=self.style)
     processes = []
     try:
       for item in selected_items:

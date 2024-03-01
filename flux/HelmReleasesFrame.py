@@ -40,8 +40,8 @@ class HelmReleasesFrame(FluxCRsFrame):
     self.ctx_menu.add_command(label="Suspend", command=lambda: self.fluxCommand(resource="helmrelease", verb="suspend", options="--all"))
     self.ctx_menu.add_command(label="Resume", command=lambda: self.fluxCommand(resource="helmrelease", verb="resume", options="--all --wait=false"))
     self.ctx_menu.add_command(label="Suspend + Resume", command=self.suspendResume)
-    self.ctx_menu.add_command(label="Reset", command=self.reset)
-    self.ctx_menu.add_command(label="Force", command=self.force)
+    self.ctx_menu.add_command(label="Reset", command=lambda: threading.Thread(self.fluxCommandPopup(resource="helmrelease", verb="reconcile", options="--reset")).start())
+    self.ctx_menu.add_command(label="Force", command=lambda: threading.Thread(self.fluxCommandPopup(resource="helmrelease", verb="reconcile", options="--force")).start())
     self.ctx_menu.add_separator()
     self.ctx_menu.add_command(label="Helm Values", command=lambda: threading.Thread(target=self.helmValues_popup).start())
     
@@ -89,12 +89,6 @@ class HelmReleasesFrame(FluxCRsFrame):
     self.fluxCommand(resource="helmrelease", verb="suspend", options="--all")
     self.fluxCommand(resource="helmrelease", verb="resume", options="--all --wait=false")
   
-  def reset(self):
-    self.fluxCommand(resource="helmrelease", verb="reconcile", options="--reset")
-  
-  def force(self):
-    self.fluxCommand(resource="helmrelease", verb="reconcile", options="--force")
-
   def helmValues_popup_close(self, name, namespace, frame):
     try:
       del self.selected_revision[f"{name}.{namespace}"]

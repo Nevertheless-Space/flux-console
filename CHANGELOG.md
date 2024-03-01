@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.12.1
+
+- HelmRelease `force` and `reset` menu fields improvements
+- Removing duplicates when the same manifest is present in Kubernetes with different `apiVersion`
+
 ## 0.12.0
 
 - Flux `2.2.3` support

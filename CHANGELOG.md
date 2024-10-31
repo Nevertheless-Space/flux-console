@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.12.2
+
+- HelmRelease with missing `releaseName` support
+
 ## 0.12.1
 
 - HelmRelease `force` and `reset` menu fields improvements

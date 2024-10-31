@@ -197,8 +197,10 @@ class HelmReleasesFrame(FluxCRsFrame):
     helmrelease = self.getFluxCR(self.table.focus())
     if helmrelease == None: return
     
-    name = helmrelease["spec"]["releaseName"]
     namespace = helmrelease["metadata"]["namespace"]
+    name = helmrelease["metadata"]["name"]
+    try: name = helmrelease["spec"]["releaseName"]
+    except: pass
 
     popup_frame = utils.outputRedirectedPopup(title=f"Helm Uninstall: {name}.{namespace}", style=self.style)
     result = utils.generic_command(f"helm uninstall -n {namespace} {name}")

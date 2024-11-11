@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.12.3
+
+- Allowing `HelmChart` reconcile
+
 ## 0.12.2
 
 - HelmRelease with missing `releaseName` support

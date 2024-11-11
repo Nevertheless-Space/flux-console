@@ -75,8 +75,3 @@ class SourcesFrame(FluxCRsFrame):
   def suspendResume(self):
     self.fluxCommand(resource=f"source {self.getSourceTypeCommand()}", verb="suspend", options="--all")
     self.fluxCommand(resource=f"source {self.getSourceTypeCommand()}", verb="resume", options="--all --wait=false")
-  
-  def fluxCommandPopup(self, resource, verb, options=""):
-    if "chart" in resource and verb == "reconcile":
-      messagebox.showerror(title="Flux Error", message="You cannot reconcile an HelmChart resource")
-    else: super().fluxCommandPopup(resource, verb, options)

@@ -79,10 +79,8 @@ def subcommandOutputRedirect(process, stderr=False, decode_error_replacement="",
     if out == '' and process.poll() != None:
       break
     if out != '':
-      if queue != None: queue.put(out)
-      else:
-        sys.stdout.write(out)
-        sys.stdout.flush()
+      sys.stdout.write(out)
+      sys.stdout.flush()
 
 def redirectOutputCommand(command, stderr=False, decode_error_replacement="", queue=None):
   if command.startswith('kubectl'):
@@ -114,18 +112,6 @@ def outputRedirectedPopup(style, title):
   sys.stdout = StdoutRedirector(text)
   
   return frame_secondary_window
-
-def subprocessOutputRedirect(process, queue):
-  while True:
-    try:
-      output = process.stdout.read(1).decode()
-      if output == '' and process.poll() is not None:
-        break
-      if output != '':
-        sys.stdout.write(output)
-        sys.stdout.flush()
-    except:
-      break
 
 def subprocessRun(target_function, args: tuple):
   thread = threading.Thread(target=target_function, args=args)

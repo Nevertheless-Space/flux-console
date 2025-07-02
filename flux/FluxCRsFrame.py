@@ -166,8 +166,13 @@ class FluxCRsFrame():
   def contextMenu_popup(self, event):
     try:
       self.ctx_menu.tk_popup(event.x_root, event.y_root)
+    except:
+      pass
     finally:
-      self.ctx_menu.grab_release()
+      try:
+        self.ctx_menu.grab_release()
+      except:
+        pass
 
   def status_popup(self):
 

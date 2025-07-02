@@ -84,7 +84,8 @@ class EventsFrame(FluxCRsFrame):
     frame_content.pack(fill=BOTH, expand=TRUE,padx=5*self.style.multiplier, pady=5*self.style.multiplier)
 
     # Text widget
-    text = Text(frame_content, wrap="word", font=self.style.getTextFont01(), foreground=self.style.text_font01_color)
+    text_params = self.style.getTextWidgetParams()
+    text = Text(frame_content, wrap="word", **text_params)
     text.pack(fill=BOTH, expand=TRUE)
 
     text.insert(END, f"TYPE: {str(fluxcr.type)}\n")

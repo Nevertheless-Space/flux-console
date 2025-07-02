@@ -3,6 +3,7 @@ from tkinter import ttk
 import common.icon as icon
 import tempfile
 import os
+import platform
 
 class MainStyle():
 
@@ -19,12 +20,20 @@ class MainStyle():
   screen_width = None
   screen_height = None
   text_font01_color = "gray22"
+  text_background_color = None
 
   def __init__(self, screen_width, screen_height):
     icon.createIconFile(self.icon_path)
     self.style = ttk.Style()
     self.screen_width = screen_width
     self.screen_height = screen_height
+
+    if platform.system() == "Darwin":
+      self.text_font01_color = "black"
+      self.text_background_color = "gray90"
+    else:
+      self.text_font01_color = "gray22"
+      self.text_background_color = None
 
     self.multiplier = 1
     if self.screen_width > 1920: self.multiplier = 2
@@ -72,3 +81,12 @@ class MainStyle():
 
   def getTextFont01(self):
     return ("Calibri", str(8 + 2*self.multiplier))
+
+  def getTextWidgetParams(self):
+    params = {
+      "font": self.getTextFont01(),
+      "foreground": self.text_font01_color
+    }
+    if self.text_background_color:
+      params["background"] = self.text_background_color
+    return params

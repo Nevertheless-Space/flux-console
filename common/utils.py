@@ -105,7 +105,8 @@ def outputRedirectedPopup(style, title):
 
   scroll_v = Scrollbar(frame_content)
   scroll_v.pack(side=RIGHT,fill=Y)
-  text = Text(frame_content, yscrollcommand= scroll_v.set, wrap="word", font=style.getTextFont01(), foreground=style.text_font01_color)
+  text_params = style.getTextWidgetParams()
+  text = Text(frame_content, yscrollcommand= scroll_v.set, wrap="word", **text_params)
   text.pack(fill=BOTH, expand=TRUE)
   scroll_v.config(command = text.yview)
 

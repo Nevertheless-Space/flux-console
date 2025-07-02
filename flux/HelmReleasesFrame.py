@@ -163,7 +163,8 @@ class HelmReleasesFrame(FluxCRsFrame):
       frame_content.destroy()
     else:
       if self.helm_values_text.get(f"{name}.{namespace}"): self.helm_values_text[f"{name}.{namespace}"].destroy()
-      self.helm_values_text[f"{name}.{namespace}"] = Text(frame_content, yscrollcommand= scroll_v.set, xscrollcommand = scroll_h.set, wrap= NONE, font=self.style.getTextFont01(), foreground=self.style.text_font01_color)
+      text_params = self.style.getTextWidgetParams()
+      self.helm_values_text[f"{name}.{namespace}"] = Text(frame_content, yscrollcommand= scroll_v.set, xscrollcommand = scroll_h.set, wrap= NONE, **text_params)
       self.helm_values_text[f"{name}.{namespace}"].pack(fill=BOTH, expand=TRUE)
       scroll_h.config(command = self.helm_values_text[f"{name}.{namespace}"].xview)
       scroll_v.config(command = self.helm_values_text[f"{name}.{namespace}"].yview)

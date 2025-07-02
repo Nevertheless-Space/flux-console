@@ -36,14 +36,32 @@ def find_flux():
       return path
   return 'flux'
 
+def find_helm():
+  helm_path = shutil.which('helm')
+  if helm_path:
+    return helm_path
+  common_paths = [
+    '/usr/local/bin/helm',
+    '/opt/homebrew/bin/helm',
+    '/usr/bin/helm',
+    os.path.expanduser('~/.local/bin/helm')
+  ]
+  for path in common_paths:
+    if os.path.isfile(path) and os.access(path, os.X_OK):
+      return path
+  return 'helm'
+
 KUBECTL_PATH = find_kubectl()
 FLUX_PATH = find_flux()
+HELM_PATH = find_helm()
 
 def kubectl_command(command):
   if command.startswith('kubectl'):
     command = command.replace('kubectl', KUBECTL_PATH, 1)
   elif command.startswith('flux'):
     command = command.replace('flux', FLUX_PATH, 1)
+  elif command.startswith('helm'):
+    command = command.replace('helm', HELM_PATH, 1)
   result = subprocess.run(command + " -o json", capture_output=True, shell=True)
   error = result.stderr.decode()
   if error != "":
@@ -56,6 +74,8 @@ def generic_command(command):
     command = command.replace('kubectl', KUBECTL_PATH, 1)
   elif command.startswith('flux'):
     command = command.replace('flux', FLUX_PATH, 1)
+  elif command.startswith('helm'):
+    command = command.replace('helm', HELM_PATH, 1)
   result = subprocess.run(command, capture_output=True, shell=True)
   error = result.stderr.decode()
   return { "stdout": result.stdout.decode(), "stderr": result.stderr.decode()}
@@ -87,6 +107,8 @@ def redirectOutputCommand(command, stderr=False, decode_error_replacement="", qu
     command = command.replace('kubectl', KUBECTL_PATH, 1)
   elif command.startswith('flux'):
     command = command.replace('flux', FLUX_PATH, 1)
+  elif command.startswith('helm'):
+    command = command.replace('helm', HELM_PATH, 1)
   process = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE)
   thread = threading.Thread(target=subcommandOutputRedirect, args=(process,stderr,decode_error_replacement,queue))
   thread.start()

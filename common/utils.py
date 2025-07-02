@@ -1,12 +1,50 @@
 import sys
 import json
-import multiprocessing
 import threading
 import subprocess
+import shutil
+import os
 from tkinter import *
 
+def find_kubectl():
+  kubectl_path = shutil.which('kubectl')
+  if kubectl_path:
+    return kubectl_path
+  common_paths = [
+    '/usr/local/bin/kubectl',
+    '/opt/homebrew/bin/kubectl',
+    '/usr/bin/kubectl',
+    os.path.expanduser('~/.local/bin/kubectl')
+  ]
+  for path in common_paths:
+    if os.path.isfile(path) and os.access(path, os.X_OK):
+      return path
+  return 'kubectl'
+
+def find_flux():
+  flux_path = shutil.which('flux')
+  if flux_path:
+    return flux_path
+  common_paths = [
+    '/usr/local/bin/flux',
+    '/opt/homebrew/bin/flux',
+    '/usr/bin/flux',
+    os.path.expanduser('~/.local/bin/flux')
+  ]
+  for path in common_paths:
+    if os.path.isfile(path) and os.access(path, os.X_OK):
+      return path
+  return 'flux'
+
+KUBECTL_PATH = find_kubectl()
+FLUX_PATH = find_flux()
+
 def kubectl_command(command):
-  result = subprocess.run(command.split(' ') + ["-o", "json"], capture_output=True, shell=True)
+  if command.startswith('kubectl'):
+    command = command.replace('kubectl', KUBECTL_PATH, 1)
+  elif command.startswith('flux'):
+    command = command.replace('flux', FLUX_PATH, 1)
+  result = subprocess.run(command + " -o json", capture_output=True, shell=True)
   error = result.stderr.decode()
   if error != "":
     return { "stdout": result.stdout.decode(), "stderr": result.stderr.decode()}
@@ -14,7 +52,11 @@ def kubectl_command(command):
     return { "stdout": json.loads(result.stdout), "stderr": result.stderr.decode()}
 
 def generic_command(command):
-  result = subprocess.run(command.split(' '), capture_output=True, shell=True)
+  if command.startswith('kubectl'):
+    command = command.replace('kubectl', KUBECTL_PATH, 1)
+  elif command.startswith('flux'):
+    command = command.replace('flux', FLUX_PATH, 1)
+  result = subprocess.run(command, capture_output=True, shell=True)
   error = result.stderr.decode()
   return { "stdout": result.stdout.decode(), "stderr": result.stderr.decode()}
 
@@ -43,6 +85,10 @@ def subcommandOutputRedirect(process, stderr=False, decode_error_replacement="",
         sys.stdout.flush()
 
 def redirectOutputCommand(command, stderr=False, decode_error_replacement="", queue=None):
+  if command.startswith('kubectl'):
+    command = command.replace('kubectl', KUBECTL_PATH, 1)
+  elif command.startswith('flux'):
+    command = command.replace('flux', FLUX_PATH, 1)
   process = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE)
   thread = threading.Thread(target=subcommandOutputRedirect, args=(process,stderr,decode_error_replacement,queue))
   thread.start()
@@ -70,21 +116,21 @@ def outputRedirectedPopup(style, title):
   return frame_secondary_window
 
 def subprocessOutputRedirect(process, queue):
-  wait = True
-  while wait or queue.qsize() != 0:
-    if not process.is_alive():
-      wait = False
-    if queue.qsize() != 0:
-      sys.stdout.write(queue.get())
-      sys.stdout.flush()
+  while True:
+    try:
+      output = process.stdout.read(1).decode()
+      if output == '' and process.poll() is not None:
+        break
+      if output != '':
+        sys.stdout.write(output)
+        sys.stdout.flush()
+    except:
+      break
 
 def subprocessRun(target_function, args: tuple):
-  queue = multiprocessing.Queue()
-  process = multiprocessing.Process(target=target_function, args=args, kwargs={"queue": queue})
-  process.start()
-  threading.Thread(target=subprocessOutputRedirect, args=(process,queue)).start()
-  return process
+  thread = threading.Thread(target=target_function, args=args)
+  thread.start()
+  return thread
 
 def terminateFrameProcesses(frame, processes: list):
-  for process in processes: process.terminate()
   frame.destroy()

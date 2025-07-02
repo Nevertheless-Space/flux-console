@@ -80,7 +80,7 @@ class Home():
     self.kubecontexts_combobox.pack(fill=X, expand=FALSE, padx=[self.style.fringe_padding, self.style.fringe_padding*3])
 
   def initKubecontexts(self):
-    contexts_result = utils.generic_command("kubectl config view -o=jsonpath='{.contexts[*].name}'")
+    contexts_result = utils.generic_command('kubectl config view -o=jsonpath="{.contexts[*].name}"')
     if contexts_result["stderr"] != '':
       messagebox.showerror(title="Kubectl Error", message=contexts_result["stderr"])
       return
@@ -89,7 +89,7 @@ class Home():
     self.kubecontexts_combobox["values"] = [f'{context}' for context in self.kubecontexts]
 
   def setCurrentContext(self):
-    current_context_result = utils.generic_command("kubectl config view -o=jsonpath='{.current-context}'")
+    current_context_result = utils.generic_command('kubectl config view -o=jsonpath="{.current-context}"')
     if current_context_result["stderr"] != '':
         messagebox.showerror(title="Kubectl Error", message=current_context_result["stderr"])
         return

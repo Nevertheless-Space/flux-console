@@ -1,10 +1,12 @@
 from tkinter import *
 from tkinter import ttk
 import common.icon as icon
+import tempfile
+import os
 
 class MainStyle():
 
-  icon_path = '$$_temp.ico'
+  icon_path = os.path.join(tempfile.gettempdir(), '$$_temp.ico')
   style = None
   multiplier = None
   fringe_padding = None

@@ -1,13 +1,19 @@
-from ctypes import windll
-windll.shcore.SetProcessDpiAwareness(1)
+import platform
+if platform.system() == "Windows":
+    from ctypes import windll
+    windll.shcore.SetProcessDpiAwareness(1)
 
 from multiprocessing import freeze_support
+import multiprocessing
 from tkinter import *
 import common.icon as icon
 import common.style as style
 import requests
 import semver
 from Home import Home
+
+if platform.system() == "Darwin":
+  multiprocessing.set_start_method('spawn', force=True)
 
 def getTitle():
   current_version = "0.0.0"

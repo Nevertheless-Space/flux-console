@@ -4,3 +4,4 @@ dist
 *.spec
 *.venv
 debug*
+.DS_Store
